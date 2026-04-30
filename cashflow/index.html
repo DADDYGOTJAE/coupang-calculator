@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 통장은 언제 플러스가 될까? · 쿠팡 로켓그로스 시뮬레이터</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
+  .wrap{max-width:880px;margin:0 auto}
+  .back-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a736a;text-decoration:none;margin-bottom:12px}
+  .back-link:hover{color:#BA7517}
+  header{text-align:center;margin-bottom:28px}
+  header h1{font-size:28px;font-weight:800;letter-spacing:-.5px;color:#2c2926}
+  header p{margin-top:6px;font-size:14px;color:#7a736a}
+  .card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:18px}
+  .card h2{font-size:14px;font-weight:600;color:#7a736a;margin-bottom:18px;letter-spacing:-.2px}
+
+  /* 입력 영역 */
+  .inputs .row{display:grid;grid-template-columns:140px 1fr 100px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #ece7dc}
+  .inputs .row:last-child{border-bottom:0}
+  .inputs label{font-size:14px;font-weight:600;color:#2c2926}
+  .inputs label small{display:block;font-weight:400;font-size:11px;color:#a09a8f;margin-top:2px}
+  .inputs input[type="range"]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:#ece7dc;border-radius:3px;outline:none}
+  .inputs input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#BA7517;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .inputs input[type="range"]::-moz-range-thumb{width:20px;height:20px;background:#BA7517;border-radius:50%;cursor:pointer;border:0}
+  .inputs input[type="number"]{width:100%;padding:8px 10px;border:1px solid #ece7dc;border-radius:8px;font-size:14px;font-weight:600;text-align:right;color:#2c2926;background:#fbf8f1;font-family:inherit}
+  .inputs input[type="number"]:focus{outline:none;border-color:#BA7517;background:#fff}
+
+  /* 출시 일정 */
+  .schedule-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .schedule-header h2{margin-bottom:0}
+  .sku-total{font-size:12px;color:#7a736a;background:#f5f1e8;padding:5px 12px;border-radius:999px;white-space:nowrap}
+  .sku-total b{color:#BA7517;font-size:15px;font-weight:800}
+  .schedule-desc{font-size:12px;color:#a09a8f;margin-bottom:14px;line-height:1.45}
+  .schedule-row{display:grid;grid-template-columns:1fr 1fr 36px;gap:10px;align-items:end;padding:10px 0;border-bottom:1px dashed #ece7dc}
+  .schedule-row:last-of-type{border-bottom:0}
+  .schedule-row label{font-size:11px;color:#7a736a;display:block;margin-bottom:4px;font-weight:500}
+  .schedule-row select,.schedule-row .num{width:100%;padding:8px 10px;border:1px solid #ece7dc;border-radius:8px;font-size:14px;font-weight:600;color:#2c2926;background:#fbf8f1;font-family:inherit}
+  .schedule-row select:focus,.schedule-row .num:focus{outline:none;border-color:#BA7517;background:#fff}
+  .remove-btn{background:transparent;border:1px solid #ece7dc;color:#c0392b;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1}
+  .remove-btn:hover{background:#fff4ed;border-color:#c0392b}
+  .remove-btn.placeholder{visibility:hidden}
+  .add-btn{width:100%;padding:12px;background:#fbf8f1;border:1.5px dashed #BA7517;color:#BA7517;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit}
+  .add-btn:hover{background:#fff5e0}
+  .add-btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* 큰 숫자 3개 */
+  .bignums{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .bignum{background:#fff;border-radius:14px;padding:20px 14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .bignum .lbl{font-size:12px;color:#7a736a;font-weight:600;margin-bottom:8px}
+  .bignum .val{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .bignum .sub{font-size:11px;color:#a09a8f;margin-top:4px}
+  .pos{color:#1D9E75}
+  .neg{color:#c0392b}
+  .gold{color:#BA7517}
+
+  /* 차트 */
+  .chart-card{padding:18px}
+  .chart-card canvas{max-height:300px}
+
+  /* 결론 박스 */
+  .conclusion{background:#BA7517;color:#fff;border-radius:14px;padding:22px;text-align:center;font-size:18px;font-weight:600;letter-spacing:-.3px;line-height:1.5}
+  .conclusion b{color:#fff8e7;font-size:22px;font-weight:800}
+  .conclusion.warn{background:#c0392b}
+  .conclusion .small{display:block;font-size:13px;font-weight:400;color:rgba(255,255,255,.85);margin-top:8px}
+
+  /* 경고 라인 */
+  .warn-line{margin-top:14px;padding:12px 16px;background:#fff4ed;border-left:4px solid #c0392b;border-radius:6px;color:#8b2820;font-size:13px;font-weight:500}
+  .warn-line.hidden{display:none}
+
+  /* 모바일 */
+  @media (max-width:640px){
+    body{padding:16px 10px}
+    header h1{font-size:22px}
+    .card{padding:16px}
+    .inputs .row{grid-template-columns:1fr;gap:6px;padding:12px 0}
+    .inputs label{font-size:13px}
+    .inputs input[type="number"]{width:100%}
+    .schedule-row{grid-template-columns:1fr 1fr 36px;gap:8px}
+    .bignums{grid-template-columns:1fr;gap:10px}
+    .bignum{padding:16px;display:flex;align-items:center;justify-content:space-between;text-align:left}
+    .bignum .lbl{margin:0}
+    .bignum .val{font-size:22px}
+    .conclusion{font-size:16px;padding:18px}
+    .conclusion b{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../">← 도구 모음으로</a>
+  <header>
+    <h1>내 통장은 언제 플러스가 될까?</h1>
+    <p>쿠팡 로켓그로스 현금흐름 시뮬레이터 · SKU별 출시 시점까지 반영</p>
+  </header>
+
+  <!-- 입력 6개 -->
+  <div class="card inputs">
+    <h2>SKU 1개 기준 사양 (모든 SKU에 동일 적용)</h2>
+
+    <div class="row">
+      <label>① 판매가 <small>쿠팡에서 파는 가격</small></label>
+      <input type="range" id="r-price" min="1000" max="100000" step="100" value="10000">
+      <input type="number" id="n-price" value="10000" min="0">
+    </div>
+
+    <div class="row">
+      <label>② 원가 <small>중국 매입가 등</small></label>
+      <input type="range" id="r-cost" min="0" max="50000" step="100" value="3000">
+      <input type="number" id="n-cost" value="3000" min="0">
+    </div>
+
+    <div class="row">
+      <label>③ 쿠팡 수수료 % <small>부가세 포함</small></label>
+      <input type="range" id="r-fee" min="0" max="30" step="0.1" value="12.88">
+      <input type="number" id="n-fee" value="12.88" min="0" step="0.01">
+    </div>
+
+    <div class="row">
+      <label>④ 입출고+배송비 <small>1개당, 원</small></label>
+      <input type="range" id="r-logi" min="0" max="10000" step="50" value="2150">
+      <input type="number" id="n-logi" value="2150" min="0">
+    </div>
+
+    <div class="row">
+      <label>⑤ 광고비 % <small>매출 대비, 부가세 포함</small></label>
+      <input type="range" id="r-ad" min="0" max="40" step="0.1" value="11">
+      <input type="number" id="n-ad" value="11" min="0" step="0.01">
+    </div>
+
+    <div class="row">
+      <label>⑥ SKU당 월 판매수량 <small>SKU 1개가 한 달에 몇 개 팔리는지</small></label>
+      <input type="range" id="r-qty" min="1" max="10000" step="10" value="1000">
+      <input type="number" id="n-qty" value="1000" min="0">
+    </div>
+  </div>
+
+  <!-- 제품 출시 일정 -->
+  <div class="card">
+    <div class="schedule-header">
+      <h2>📅 제품 출시 일정</h2>
+      <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
+    </div>
+    <p class="schedule-desc">SKU를 여러 시점에 나눠 출시할 때 사용하세요. 각 행은 "그 달에 새로 추가되는 SKU 수"입니다. 모든 SKU는 위 사양을 동일하게 사용합니다.</p>
+
+    <div id="schedule-list"></div>
+
+    <button class="add-btn" id="add-btn">+ 출시 일정 추가</button>
+  </div>
+
+  <!-- 큰 숫자 3개 -->
+  <div class="bignums">
+    <div class="bignum">
+      <div class="lbl">월 매출 (풀가동 시)</div>
+      <div class="val gold" id="rev">-</div>
+      <div class="sub" id="rev-sub">&nbsp;</div>
+    </div>
+    <div class="bignum">
+      <div class="lbl">월 순이익 (풀가동 시)</div>
+      <div class="val" id="profit">-</div>
+      <div class="sub" id="profit-sub">&nbsp;</div>
+    </div>
+    <div class="bignum">
+      <div class="lbl">통장 플러스 변곡점</div>
+      <div class="val" id="bep">-</div>
+      <div class="sub" id="bep-sub">&nbsp;</div>
+    </div>
+  </div>
+
+  <!-- 차트 -->
+  <div class="card chart-card">
+    <h2>12개월 통장 잔고 추이 <small style="font-weight:400;color:#a09a8f">· 정산 2개월 뒤 입금 기준</small></h2>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- 결론 -->
+  <div class="conclusion" id="concl">
+    값을 조정해보세요
+  </div>
+
+  <!-- 경고 -->
+  <div class="warn-line hidden" id="warn">
+    ⚠ 마진율 30% 미만은 일반적으로 추천하지 않는 구간이에요. 더 좋은 조건의 제품을 찾아보세요.
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+
+// 슬라이더 ↔ 숫자 양방향 바인딩
+['price','cost','fee','logi','ad','qty'].forEach(k => {
+  const r = $('r-'+k), n = $('n-'+k);
+  r.addEventListener('input', () => { n.value = r.value; render(); });
+  n.addEventListener('input', () => { r.value = n.value; render(); });
+});
+
+// 출시 일정 상태 (기본값: 1월에 1개 출시)
+let schedule = [{ month: 1, count: 1 }];
+
+function renderSchedule() {
+  const list = $('schedule-list');
+  list.innerHTML = '';
+  schedule.forEach((row, i) => {
+    const div = document.createElement('div');
+    div.className = 'schedule-row';
+
+    const monthOpts = Array.from({length: 12}, (_, m) => {
+      const v = m + 1;
+      return `<option value="${v}" ${row.month === v ? 'selected' : ''}>${v}월</option>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div>
+        <label>출시 시점</label>
+        <select data-i="${i}" data-field="month">${monthOpts}</select>
+      </div>
+      <div>
+        <label>추가 SKU 수</label>
+        <input class="num" type="number" data-i="${i}" data-field="count" value="${row.count}" min="1" max="100">
+      </div>
+      <button class="remove-btn ${schedule.length === 1 ? 'placeholder' : ''}" data-i="${i}" aria-label="삭제">×</button>
+    `;
+    list.appendChild(div);
+  });
+
+  // 이벤트 바인딩
+  list.querySelectorAll('select, input.num').forEach(el => {
+    el.addEventListener('input', e => {
+      const i = +e.target.dataset.i;
+      const field = e.target.dataset.field;
+      const val = +e.target.value || (field === 'count' ? 1 : 1);
+      schedule[i][field] = val;
+      render();
+    });
+  });
+  list.querySelectorAll('.remove-btn:not(.placeholder)').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const i = +e.target.dataset.i;
+      schedule.splice(i, 1);
+      if (schedule.length === 0) schedule = [{ month: 1, count: 1 }];
+      renderSchedule();
+      render();
+    });
+  });
+
+  // 추가 버튼 비활성화 조건: 행이 12개 이상이면 (실용적 한도)
+  $('add-btn').disabled = schedule.length >= 12;
+}
+
+$('add-btn').addEventListener('click', () => {
+  // 마지막 행의 다음 달 + 1 SKU
+  const lastMonth = Math.max(...schedule.map(s => s.month));
+  const nextMonth = Math.min(lastMonth + 1, 12);
+  schedule.push({ month: nextMonth, count: 1 });
+  renderSchedule();
+  render();
+});
+
+function fmtWon(v){
+  const a = Math.abs(v);
+  const s = v < 0 ? '-' : '';
+  if (a >= 100000000) return s + (a/100000000).toFixed(2) + '억';
+  if (a >= 10000) return s + Math.round(a/10000).toLocaleString() + '만';
+  return s + Math.round(a).toLocaleString();
+}
+
+function calc(){
+  const price = +$('n-price').value || 0;
+  const cost  = +$('n-cost').value  || 0;
+  const fee   = +$('n-fee').value   || 0;
+  const logi  = +$('n-logi').value  || 0;
+  const ad    = +$('n-ad').value    || 0;
+  const qty   = +$('n-qty').value   || 0;
+
+  // SKU 1개당 월 단위 수치
+  const revenuePerSku   = price * qty;
+  const costPerSku      = cost  * qty;
+  const feePerSku       = revenuePerSku * (fee / 100);
+  const logiPerSku      = logi  * qty;
+  const adPerSku        = revenuePerSku * (ad / 100);
+  const profitPerSku    = revenuePerSku - costPerSku - feePerSku - logiPerSku - adPerSku;
+  const marginPct       = revenuePerSku > 0 ? (profitPerSku / revenuePerSku) * 100 : 0;
+  const immediateOutPerSku = costPerSku;
+  const settlementInPerSku = revenuePerSku - feePerSku - logiPerSku - adPerSku;
+
+  // m월 시점에 누적된 활성 SKU 수
+  const skusAt = (m) => schedule
+    .filter(s => s.month <= m)
+    .reduce((sum, s) => sum + (s.count || 0), 0);
+  const totalSkus = skusAt(12);
+
+  // 12개월 통장 잔고
+  const balance = [];
+  let bal = 0;
+  for (let m = 1; m <= 12; m++) {
+    bal -= skusAt(m) * immediateOutPerSku;       // 이번 달 활성 SKU 전체의 매입원가
+    if (m > 2) bal += skusAt(m - 2) * settlementInPerSku;  // 2개월 전 활성 SKU 정산금
+    balance.push(Math.round(bal));
+  }
+
+  // 변곡점: 처음 0 이상 (단, SKU가 1개 이상일 때만 의미 있음)
+  let bep = null;
+  if (totalSkus > 0) {
+    for (let i = 0; i < balance.length; i++) {
+      if (balance[i] >= 0) { bep = i + 1; break; }
+    }
+  }
+
+  return {
+    revenuePerSku, profitPerSku, marginPct,
+    revenueTotal: revenuePerSku * totalSkus,
+    profitTotal:  profitPerSku  * totalSkus,
+    balance, bep, totalSkus
+  };
+}
+
+let chartInst = null;
+
+function render(){
+  $('sku-total').textContent = schedule.reduce((s, r) => s + (r.count || 0), 0);
+
+  const r = calc();
+
+  // 큰 숫자
+  $('rev').textContent = fmtWon(r.revenueTotal) + '원';
+  $('rev-sub').textContent = r.totalSkus + '개 SKU 풀가동 시';
+
+  $('profit').textContent = (r.profitTotal >= 0 ? '+' : '') + fmtWon(r.profitTotal) + '원';
+  $('profit').className = 'val ' + (r.profitTotal >= 0 ? 'pos' : 'neg');
+  $('profit-sub').textContent = '마진율 ' + r.marginPct.toFixed(1) + '% (개별 SKU)';
+
+  if (r.bep === null) {
+    $('bep').textContent = r.totalSkus === 0 ? '—' : '12개월+';
+    $('bep').className = 'val ' + (r.totalSkus === 0 ? 'gold' : 'neg');
+    $('bep-sub').textContent = r.totalSkus === 0 ? 'SKU를 추가하세요' : '1년 내 회복 어려움';
+  } else {
+    $('bep').textContent = r.bep + '개월차';
+    $('bep').className = 'val ' + (r.bep <= 6 ? 'pos' : 'gold');
+    $('bep-sub').textContent = r.bep + '개월 후 통장 플러스 전환';
+  }
+
+  // 차트
+  const labels = Array.from({length: 12}, (_, i) => (i+1) + '월');
+  const data = r.balance.map(v => +(v/10000).toFixed(0));
+
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart($('chart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: '통장 잔고 (만원)',
+        data,
+        borderColor: '#BA7517',
+        borderWidth: 3,
+        tension: 0.25,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: data.map(v => v >= 0 ? '#1D9E75' : '#c0392b'),
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        fill: {
+          target: { value: 0 },
+          above: 'rgba(29, 158, 117, 0.15)',
+          below: 'rgba(192, 57, 43, 0.15)'
+        }
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: c => ' ' + (c.raw >= 0 ? '+' : '') + c.raw.toLocaleString() + '만원'
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,.04)' }, ticks: { color: '#7a736a', font: { size: 11 } } },
+        y: {
+          grid: {
+            color: ctx => ctx.tick.value === 0 ? 'rgba(0,0,0,.4)' : 'rgba(0,0,0,.04)',
+            lineWidth: ctx => ctx.tick.value === 0 ? 1.5 : 1
+          },
+          ticks: { color: '#7a736a', font: { size: 11 }, callback: v => v + '만' }
+        }
+      }
+    }
+  });
+
+  // 결론 한 줄
+  const concl = $('concl');
+  const skuPrefix = r.totalSkus > 1 ? `<b>${r.totalSkus}개 SKU</b> 운영 시 — ` : '';
+
+  if (r.totalSkus === 0) {
+    concl.className = 'conclusion';
+    concl.innerHTML = '출시 일정에서 <b>SKU를 추가</b>해 보세요';
+  } else if (r.profitPerSku < 0) {
+    concl.className = 'conclusion warn';
+    concl.innerHTML = skuPrefix + '<b>매달 적자</b>입니다.<span class="small">원가를 낮추거나 판매가를 올려보세요</span>';
+  } else if (r.bep === null) {
+    concl.className = 'conclusion warn';
+    concl.innerHTML = skuPrefix + '마진은 나지만 <b>1년 내 통장 회복 어려움</b><span class="small">마진율 ' + r.marginPct.toFixed(1) + '% — 너무 낮거나 SKU 출시가 너무 늦음</span>';
+  } else {
+    concl.className = 'conclusion';
+    concl.innerHTML = skuPrefix + '마진율 <b>' + r.marginPct.toFixed(1) + '%</b> · <b>' + r.bep + '개월</b> 버티면 통장 플러스 전환<span class="small">12월 기준 월 순이익 +' + fmtWon(r.profitTotal) + '원 · 12개월 누적 ' + fmtWon(r.balance[11]) + '원</span>';
+  }
+
+  // 30% 마진 경고 (개별 SKU 마진 기준)
+  $('warn').classList.toggle('hidden', r.marginPct >= 30 || r.profitPerSku < 0 || r.totalSkus === 0);
+}
+
+renderSchedule();
+render();
+</script>
+</body>
+</html>
