@@ -10,6 +10,12 @@
   body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:32px 16px;min-height:100vh}
   .wrap{max-width:880px;margin:0 auto}
 
+  /* 상단 채널 링크 바 */
+  .topbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:18px;flex-wrap:wrap;min-height:32px}
+  .topbar a{display:inline-flex;align-items:center;gap:6px;background:#fff;padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:#2c2926;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .12s ease, color .12s ease}
+  .topbar a:hover{transform:translateY(-1px);color:#BA7517}
+  .topbar .icon{font-size:14px;line-height:1}
+
   header{text-align:center;margin-bottom:36px}
   .badge{display:inline-block;background:#fff;color:#BA7517;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;letter-spacing:.3px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:14px}
   header h1{font-size:34px;font-weight:800;letter-spacing:-.7px;color:#2c2926;line-height:1.2}
@@ -46,11 +52,14 @@
     header p{font-size:14px}
     .grid{grid-template-columns:1fr;gap:12px}
     .tool{padding:18px}
+    .topbar{justify-content:center;margin-bottom:14px}
+    .topbar a{font-size:12px;padding:6px 11px}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <nav class="topbar" id="topbar"></nav>
   <header>
     <span class="badge">쿠팡 로켓그로스 셀러용</span>
     <h1>감이 아닌 <b>숫자</b>로 판단하는<br>쿠팡 셀러 시뮬레이터</h1>
@@ -114,5 +123,24 @@
     서버로 전송되지 않으니 안심하고 실제 숫자 넣어보세요.
   </div>
 </div>
+
+<script>
+(async function loadTopbar(){
+  const bar = document.getElementById('topbar');
+  if (!bar) return;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  try {
+    const res = await fetch('links.json?t=' + Date.now(), { cache: 'no-cache' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const channels = data.channels || [];
+    if (channels.length === 0) { bar.style.display = 'none'; return; }
+    bar.innerHTML = channels.map(c => {
+      const icon = c.icon ? `<span class="icon">${esc(c.icon)}</span>` : '';
+      return `<a href="${esc(c.url)}" target="_blank" rel="noopener">${icon}${esc(c.label)}</a>`;
+    }).join('');
+  } catch (e) { /* 조용히 무시 */ }
+})();
+</script>
 </body>
 </html>

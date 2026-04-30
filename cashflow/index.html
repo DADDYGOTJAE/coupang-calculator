@@ -8,6 +8,13 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
   .wrap{max-width:880px;margin:0 auto}
+
+  /* 상단 채널 링크 바 */
+  .topbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px;flex-wrap:wrap;min-height:32px}
+  .topbar a{display:inline-flex;align-items:center;gap:6px;background:#fff;padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:#2c2926;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .12s ease, color .12s ease}
+  .topbar a:hover{transform:translateY(-1px);color:#BA7517}
+  .topbar .icon{font-size:14px;line-height:1}
+
   .back-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a736a;text-decoration:none;margin-bottom:12px}
   .back-link:hover{color:#BA7517}
   header{text-align:center;margin-bottom:28px}
@@ -84,11 +91,14 @@
     .bignum .val{font-size:22px}
     .conclusion{font-size:16px;padding:18px}
     .conclusion b{font-size:18px}
+    .topbar{justify-content:center;margin-bottom:10px}
+    .topbar a{font-size:12px;padding:6px 11px}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <nav class="topbar" id="topbar"></nav>
   <a class="back-link" href="../">← 도구 모음으로</a>
   <header>
     <h1>내 통장은 언제 플러스가 될까?</h1>
@@ -416,6 +426,24 @@ function render(){
 
 renderSchedule();
 render();
+
+// 상단 채널 링크 바 로드
+(async function loadTopbar(){
+  const bar = document.getElementById('topbar');
+  if (!bar) return;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  try {
+    const res = await fetch('../links.json?t=' + Date.now(), { cache: 'no-cache' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const channels = data.channels || [];
+    if (channels.length === 0) { bar.style.display = 'none'; return; }
+    bar.innerHTML = channels.map(c => {
+      const icon = c.icon ? `<span class="icon">${esc(c.icon)}</span>` : '';
+      return `<a href="${esc(c.url)}" target="_blank" rel="noopener">${icon}${esc(c.label)}</a>`;
+    }).join('');
+  } catch (e) { /* 조용히 무시 */ }
+})();
 </script>
 </body>
 </html>

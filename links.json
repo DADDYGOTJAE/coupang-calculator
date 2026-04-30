@@ -1,0 +1,7 @@
+{
+  "channels": [
+    { "icon": "📺", "label": "유튜브", "url": "https://www.youtube.com/" },
+    { "icon": "🧵", "label": "쓰레드", "url": "https://www.threads.com/" },
+    { "icon": "💬", "label": "단톡방", "url": "https://open.kakao.com/" }
+  ]
+}

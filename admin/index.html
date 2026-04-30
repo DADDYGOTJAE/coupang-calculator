@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>관리자 · 채널 링크 편집</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
+  .wrap{max-width:680px;margin:0 auto}
+  .back-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a736a;text-decoration:none;margin-bottom:12px}
+  .back-link:hover{color:#BA7517}
+  header{margin-bottom:24px}
+  header .badge{display:inline-block;background:#2c2926;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;letter-spacing:.3px;margin-bottom:10px}
+  header h1{font-size:24px;font-weight:800;letter-spacing:-.5px}
+  header p{margin-top:4px;font-size:13px;color:#7a736a}
+
+  .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:14px}
+  .card h2{font-size:14px;font-weight:700;color:#2c2926;margin-bottom:6px}
+  .card .desc{font-size:12px;color:#7a736a;margin-bottom:14px;line-height:1.55}
+
+  /* 토큰 입력 */
+  .pat-row{display:flex;gap:8px}
+  .pat-row input{flex:1;padding:10px 12px;border:1px solid #ece7dc;border-radius:8px;font-size:13px;font-family:"SF Mono",Menlo,monospace;color:#2c2926;background:#fbf8f1;letter-spacing:.5px}
+  .pat-row input:focus{outline:none;border-color:#BA7517;background:#fff}
+  .pat-row button{padding:10px 16px;background:#2c2926;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .pat-row button:hover{background:#1a1815}
+  .pat-status{font-size:12px;margin-top:10px}
+  .pat-status.ok{color:#1D9E75}
+  .pat-status.err{color:#c0392b}
+  details{margin-top:14px;font-size:12px;color:#7a736a}
+  details summary{cursor:pointer;font-weight:600;color:#BA7517;padding:6px 0}
+  details summary:hover{color:#8b5410}
+  details ol{margin:8px 0 0 20px;line-height:1.7}
+  details a{color:#BA7517}
+
+  /* 링크 편집 */
+  .link-row{display:grid;grid-template-columns:60px 1fr 2fr 36px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px dashed #ece7dc}
+  .link-row:last-of-type{border-bottom:0}
+  .link-row input{padding:9px 10px;border:1px solid #ece7dc;border-radius:8px;font-size:13px;color:#2c2926;background:#fbf8f1;font-family:inherit;width:100%}
+  .link-row input:focus{outline:none;border-color:#BA7517;background:#fff}
+  .link-row .icon-input{text-align:center;font-size:18px;padding:6px}
+  .link-row .label-input{font-weight:600}
+  .link-row .url-input{font-family:"SF Mono",Menlo,monospace;font-size:12px}
+  .remove-btn{background:transparent;border:1px solid #ece7dc;color:#c0392b;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1}
+  .remove-btn:hover{background:#fff4ed;border-color:#c0392b}
+  .add-btn{width:100%;padding:11px;background:#fbf8f1;border:1.5px dashed #BA7517;color:#BA7517;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit}
+  .add-btn:hover{background:#fff5e0}
+
+  /* 저장 버튼 */
+  .save-btn{width:100%;padding:14px;background:#BA7517;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;font-family:inherit;letter-spacing:-.2px;transition:background .15s}
+  .save-btn:hover:not(:disabled){background:#a06515}
+  .save-btn:disabled{background:#a09a8f;cursor:not-allowed}
+
+  /* 상태 메시지 */
+  .status-msg{margin-top:12px;padding:14px 16px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.55}
+  .status-msg.ok{background:#e6f5ee;color:#0e6e4d;border-left:4px solid #1D9E75}
+  .status-msg.err{background:#fff4ed;color:#8b2820;border-left:4px solid #c0392b}
+  .status-msg.info{background:#fbf8f1;color:#7a4f0a;border-left:4px solid #BA7517}
+  .status-msg.hidden{display:none}
+
+  /* 미리보기 */
+  .preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding:14px;background:#f5f1e8;border-radius:10px}
+  .preview .pill{display:inline-flex;align-items:center;gap:6px;background:#fff;padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:#2c2926;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .preview .empty{color:#a09a8f;font-size:12px}
+  .preview-label{font-size:11px;color:#7a736a;font-weight:700;letter-spacing:.4px;margin-bottom:8px;text-transform:uppercase}
+
+  /* 모바일 */
+  @media (max-width:640px){
+    .link-row{grid-template-columns:50px 1fr 36px;gap:6px}
+    .link-row .url-input{grid-column:1 / -1}
+    .pat-row{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../">← 사이트로 돌아가기</a>
+  <header>
+    <span class="badge">🔧 관리자</span>
+    <h1>채널 링크 편집</h1>
+    <p>변경하면 GitHub에 자동 커밋되고, 1~2분 후 사이트에 반영됩니다.</p>
+  </header>
+
+  <!-- GitHub 토큰 -->
+  <div class="card" id="pat-card">
+    <h2>1단계 · GitHub 토큰 등록 (최초 1회)</h2>
+    <p class="desc">이 페이지가 GitHub에 변경사항을 저장하려면 토큰이 필요해요. 토큰은 <b>이 브라우저에만</b> 저장되고, 외부로 전송되지 않습니다.</p>
+
+    <div class="pat-row">
+      <input type="password" id="pat-input" placeholder="ghp_... 또는 github_pat_..." autocomplete="off">
+      <button id="pat-save">토큰 저장</button>
+    </div>
+    <div class="pat-status" id="pat-status"></div>
+
+    <details>
+      <summary>토큰 받는 방법 (3분)</summary>
+      <ol>
+        <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> 접속</li>
+        <li><b>Token name</b>: <code>coupang-calculator-admin</code></li>
+        <li><b>Expiration</b>: 90 days (만료되면 새로 발급)</li>
+        <li><b>Repository access</b>: "Only select repositories" → <code>coupang-calculator</code> 선택</li>
+        <li><b>Permissions</b> → <b>Repository permissions</b> → <b>Contents</b>: <b>Read and write</b></li>
+        <li><b>Generate token</b> 클릭 → 노란 박스의 <code>github_pat_...</code> 토큰 복사</li>
+        <li>이 페이지로 돌아와서 위 입력창에 붙여넣기 → <b>토큰 저장</b></li>
+      </ol>
+    </details>
+  </div>
+
+  <!-- 링크 편집 -->
+  <div class="card">
+    <h2>2단계 · 채널 링크 편집</h2>
+    <p class="desc">아이콘(이모지)·이름·URL을 입력하세요. 빈 행은 자동으로 제외됩니다.</p>
+
+    <div id="links-list"></div>
+    <button class="add-btn" id="add-link">+ 링크 추가</button>
+
+    <div class="preview-label" style="margin-top:18px">미리보기</div>
+    <div class="preview" id="preview"></div>
+  </div>
+
+  <button class="save-btn" id="save-btn" disabled>💾 저장하고 사이트에 반영</button>
+  <div class="status-msg hidden" id="status"></div>
+</div>
+
+<script>
+const REPO_OWNER = 'DADDYGOTJAE';
+const REPO_NAME = 'coupang-calculator';
+const FILE_PATH = 'links.json';
+const PAT_KEY = 'coupang_admin_pat';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let links = [];      // [{icon, label, url}]
+let currentSha = null;
+
+// ===== 토큰 관리 =====
+function getPat(){ return localStorage.getItem(PAT_KEY) || ''; }
+function setPat(v){ localStorage.setItem(PAT_KEY, v); }
+function clearPat(){ localStorage.removeItem(PAT_KEY); }
+
+async function verifyPat(token){
+  try {
+    const res = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.login;
+  } catch (e) { return null; }
+}
+
+async function checkPatOnLoad(){
+  const token = getPat();
+  if (!token) {
+    $('pat-status').textContent = '토큰을 등록하면 저장 버튼이 활성화됩니다.';
+    $('pat-status').className = 'pat-status';
+    return false;
+  }
+  const login = await verifyPat(token);
+  if (login) {
+    $('pat-status').textContent = '✓ 토큰 유효 — ' + login + ' (저장됨)';
+    $('pat-status').className = 'pat-status ok';
+    $('pat-input').placeholder = '토큰 등록 완료 (변경하려면 새 토큰 입력)';
+    $('save-btn').disabled = false;
+    return true;
+  } else {
+    $('pat-status').textContent = '✗ 토큰이 만료됐거나 무효합니다. 새로 발급받으세요.';
+    $('pat-status').className = 'pat-status err';
+    clearPat();
+    return false;
+  }
+}
+
+$('pat-save').addEventListener('click', async () => {
+  const token = $('pat-input').value.trim();
+  if (!token) { alert('토큰을 입력하세요'); return; }
+  $('pat-status').textContent = '확인 중...';
+  $('pat-status').className = 'pat-status';
+  const login = await verifyPat(token);
+  if (login) {
+    setPat(token);
+    $('pat-input').value = '';
+    $('pat-status').textContent = '✓ 토큰 유효 — ' + login + ' (저장 완료)';
+    $('pat-status').className = 'pat-status ok';
+    $('save-btn').disabled = false;
+    await loadCurrentLinks();
+  } else {
+    $('pat-status').textContent = '✗ 토큰이 무효합니다. 권한·만료 확인';
+    $('pat-status').className = 'pat-status err';
+  }
+});
+
+// ===== 링크 편집 =====
+function renderLinks(){
+  const list = $('links-list');
+  list.innerHTML = '';
+  if (links.length === 0) links.push({ icon: '', label: '', url: '' });
+  links.forEach((row, i) => {
+    const div = document.createElement('div');
+    div.className = 'link-row';
+    div.innerHTML = `
+      <input class="icon-input" data-i="${i}" data-field="icon" placeholder="📺" value="${esc(row.icon || '')}" maxlength="2">
+      <input class="label-input" data-i="${i}" data-field="label" placeholder="채널명" value="${esc(row.label || '')}">
+      <input class="url-input" data-i="${i}" data-field="url" placeholder="https://..." value="${esc(row.url || '')}">
+      <button class="remove-btn" data-i="${i}" aria-label="삭제">×</button>
+    `;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('input').forEach(el => {
+    el.addEventListener('input', e => {
+      const i = +e.target.dataset.i;
+      const field = e.target.dataset.field;
+      links[i][field] = e.target.value;
+      renderPreview();
+    });
+  });
+  list.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const i = +e.currentTarget.dataset.i;
+      links.splice(i, 1);
+      if (links.length === 0) links = [{ icon: '', label: '', url: '' }];
+      renderLinks();
+      renderPreview();
+    });
+  });
+}
+
+function renderPreview(){
+  const p = $('preview');
+  const valid = links.filter(l => (l.label || '').trim() && (l.url || '').trim());
+  if (valid.length === 0) {
+    p.innerHTML = '<span class="empty">유효한 링크가 없습니다</span>';
+    return;
+  }
+  p.innerHTML = valid.map(l => {
+    const icon = l.icon ? `<span>${esc(l.icon)}</span>` : '';
+    return `<span class="pill">${icon}${esc(l.label)}</span>`;
+  }).join('');
+}
+
+$('add-link').addEventListener('click', () => {
+  links.push({ icon: '', label: '', url: '' });
+  renderLinks();
+  renderPreview();
+});
+
+// ===== GitHub API =====
+async function loadCurrentLinks(){
+  const token = getPat();
+  if (!token) return;
+  showStatus('info', '현재 저장된 링크를 불러오는 중...');
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (res.status === 404) {
+      links = [];
+      currentSha = null;
+      renderLinks(); renderPreview();
+      hideStatus();
+      return;
+    }
+    if (!res.ok) throw new Error('불러오기 실패: ' + res.status);
+    const data = await res.json();
+    currentSha = data.sha;
+    const content = atob(data.content.replace(/\s/g, ''));
+    const decoded = decodeURIComponent(escape(content));
+    const json = JSON.parse(decoded);
+    links = (json.channels || []).map(c => ({
+      icon: c.icon || '', label: c.label || '', url: c.url || ''
+    }));
+    if (links.length === 0) links = [{ icon: '', label: '', url: '' }];
+    renderLinks();
+    renderPreview();
+    hideStatus();
+  } catch (e) {
+    showStatus('err', '링크를 불러오지 못했습니다: ' + e.message);
+  }
+}
+
+function utf8ToBase64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+async function saveLinks(){
+  const token = getPat();
+  if (!token) { showStatus('err', '토큰이 없습니다.'); return; }
+
+  const valid = links
+    .map(l => ({ icon: (l.icon || '').trim(), label: (l.label || '').trim(), url: (l.url || '').trim() }))
+    .filter(l => l.label && l.url);
+
+  const json = JSON.stringify({ channels: valid }, null, 2) + '\n';
+  const content = utf8ToBase64(json);
+
+  $('save-btn').disabled = true;
+  $('save-btn').textContent = '저장 중...';
+  showStatus('info', 'GitHub에 커밋 중...');
+
+  try {
+    const body = {
+      message: 'Update channel links via admin',
+      content,
+      sha: currentSha || undefined
+    };
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || ('저장 실패: ' + res.status));
+    }
+    const data = await res.json();
+    currentSha = data.content.sha;
+    showStatus('ok', '✅ 저장 완료! 1~2분 후 <a href="../" target="_blank">사이트</a>에 반영됩니다. 새로고침해서 확인하세요.');
+  } catch (e) {
+    showStatus('err', '✗ ' + e.message);
+  } finally {
+    $('save-btn').disabled = false;
+    $('save-btn').textContent = '💾 저장하고 사이트에 반영';
+  }
+}
+
+$('save-btn').addEventListener('click', saveLinks);
+
+function showStatus(kind, html){
+  const s = $('status');
+  s.className = 'status-msg ' + kind;
+  s.innerHTML = html;
+}
+function hideStatus(){
+  $('status').className = 'status-msg hidden';
+}
+
+// ===== 초기화 =====
+(async function init(){
+  renderLinks();
+  renderPreview();
+  const ok = await checkPatOnLoad();
+  if (ok) await loadCurrentLinks();
+})();
+</script>
+</body>
+</html>
