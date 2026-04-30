@@ -88,6 +88,11 @@
   .tax-item.highlight b{color:#fff;font-size:16px}
   .tax-disclaimer{font-size:12px;color:#7a4f0a;line-height:1.6;background:#fff8e7;padding:12px 14px;border-radius:8px;border-left:4px solid #BA7517}
 
+  /* 입력 가이드 박스 */
+  .info-tip{background:#fff8e7;border-left:4px solid #BA7517;padding:12px 14px;border-radius:8px;font-size:12px;color:#7a4f0a;line-height:1.65;margin-bottom:14px}
+  .info-tip b{color:#2c2926}
+  .info-tip .lead{font-weight:800;color:#2c2926;display:block;margin-bottom:4px;font-size:13px}
+
   /* 모바일 */
   @media (max-width:640px){
     body{padding:16px 10px}
@@ -145,7 +150,12 @@
       <h2>제품 정보</h2>
       <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
     </div>
-    <p class="desc">제품마다 사양이 다르면 각각 입력하세요. 모든 값은 <b>VAT 포함 금액</b>으로 입력합니다. 출시 월이 다르면 그 시점부터 매출이 합산됩니다.</p>
+    <div class="info-tip">
+      <span class="lead">💡 입력 가이드</span>
+      • 판매가·원가·수수료·입출고배송비·광고비는 모두 <b>부가세 포함 금액</b> 그대로 입력하세요 (쿠팡 표시 가격 그대로).<br>
+      • 부가세 %를 입력하면 그 금액에서 자동으로 부가세를 분리해 세금을 계산합니다.<br>
+      • 제품마다 사양이 다르면 각 카드에 따로 입력 — 출시 월이 다르면 그 시점부터 매출이 합산됩니다.
+    </div>
 
     <div id="products-list"></div>
 
@@ -324,27 +334,27 @@ function renderProducts() {
           <input type="number" data-field="count" value="${p.count}" min="1" max="100">
         </div>
         <div class="field">
-          <label>판매가 <small>+VAT</small></label>
+          <label>판매가 <small>부가세 포함</small></label>
           <input type="number" data-field="price" value="${p.price}" min="0" step="100">
         </div>
         <div class="field">
-          <label>원가 <small>+VAT</small></label>
+          <label>원가 <small>부가세 포함</small></label>
           <input type="number" data-field="cost" value="${p.cost}" min="0" step="100">
         </div>
         <div class="field">
-          <label>판매 수수료 % <small>VAT 포함</small></label>
+          <label>판매 수수료 % <small>부가세 포함</small></label>
           <input type="number" data-field="feePct" value="${p.feePct}" min="0" max="50" step="0.01">
         </div>
         <div class="field">
-          <label>입출고배송비 <small>1개당, +VAT</small></label>
+          <label>입출고배송비 <small>1개당, 부가세 포함</small></label>
           <input type="number" data-field="logi" value="${p.logi}" min="0" step="50">
         </div>
         <div class="field">
-          <label>광고비 % <small>매출 대비, +VAT</small></label>
+          <label>광고비 % <small>매출 대비</small></label>
           <input type="number" data-field="adPct" value="${p.adPct}" min="0" max="50" step="0.01">
         </div>
         <div class="field">
-          <label>부가세 % <small>한국 일반 10%</small></label>
+          <label>부가세 % <small>일반 10% / 면세 0</small></label>
           <input type="number" data-field="vatPct" value="${p.vatPct}" min="0" max="25" step="0.1">
         </div>
         <div class="field" style="grid-column:1 / -1">
