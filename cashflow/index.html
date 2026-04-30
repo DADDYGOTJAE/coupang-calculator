@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>내 통장은 언제 플러스가 될까? · 쿠팡 로켓그로스 시뮬레이터</title>
+<title>쿠팡 마진구조 시뮬레이터</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
@@ -17,82 +17,95 @@
 
   .back-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a736a;text-decoration:none;margin-bottom:12px}
   .back-link:hover{color:#BA7517}
-  header{text-align:center;margin-bottom:28px}
-  header h1{font-size:28px;font-weight:800;letter-spacing:-.5px;color:#2c2926}
-  header p{margin-top:6px;font-size:14px;color:#7a736a}
+
+  header{text-align:center;margin-bottom:24px}
+  header h1{font-size:28px;font-weight:800;letter-spacing:-.5px;color:#2c2926;line-height:1.25}
+  header h1 b{color:#BA7517}
+  header p{margin-top:8px;font-size:14px;color:#7a736a;line-height:1.55}
+
   .card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:18px}
-  .card h2{font-size:14px;font-weight:600;color:#7a736a;margin-bottom:18px;letter-spacing:-.2px}
+  .card h2{font-size:14px;font-weight:700;color:#2c2926;margin-bottom:6px;letter-spacing:-.2px}
+  .card .desc{font-size:12px;color:#7a736a;margin-bottom:14px;line-height:1.55}
 
-  /* 입력 영역 */
-  .inputs .row{display:grid;grid-template-columns:140px 1fr 100px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #ece7dc}
-  .inputs .row:last-child{border-bottom:0}
-  .inputs label{font-size:14px;font-weight:600;color:#2c2926}
-  .inputs label small{display:block;font-weight:400;font-size:11px;color:#a09a8f;margin-top:2px}
-  .inputs input[type="range"]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:#ece7dc;border-radius:3px;outline:none}
-  .inputs input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#BA7517;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-  .inputs input[type="range"]::-moz-range-thumb{width:20px;height:20px;background:#BA7517;border-radius:50%;cursor:pointer;border:0}
-  .inputs input[type="number"]{width:100%;padding:8px 10px;border:1px solid #ece7dc;border-radius:8px;font-size:14px;font-weight:600;text-align:right;color:#2c2926;background:#fbf8f1;font-family:inherit}
-  .inputs input[type="number"]:focus{outline:none;border-color:#BA7517;background:#fff}
-
-  /* 출시 일정 */
-  .schedule-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .schedule-header h2{margin-bottom:0}
-  .sku-total{font-size:12px;color:#7a736a;background:#f5f1e8;padding:5px 12px;border-radius:999px;white-space:nowrap}
-  .sku-total b{color:#BA7517;font-size:15px;font-weight:800}
-  .schedule-desc{font-size:12px;color:#a09a8f;margin-bottom:14px;line-height:1.45}
-  .schedule-row{display:grid;grid-template-columns:1fr 1fr 36px;gap:10px;align-items:end;padding:10px 0;border-bottom:1px dashed #ece7dc}
-  .schedule-row:last-of-type{border-bottom:0}
-  .schedule-row label{font-size:11px;color:#7a736a;display:block;margin-bottom:4px;font-weight:500}
-  .schedule-row select,.schedule-row .num{width:100%;padding:8px 10px;border:1px solid #ece7dc;border-radius:8px;font-size:14px;font-weight:600;color:#2c2926;background:#fbf8f1;font-family:inherit}
-  .schedule-row select:focus,.schedule-row .num:focus{outline:none;border-color:#BA7517;background:#fff}
-  .remove-btn{background:transparent;border:1px solid #ece7dc;color:#c0392b;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1}
-  .remove-btn:hover{background:#fff4ed;border-color:#c0392b}
-  .remove-btn.placeholder{visibility:hidden}
-  .add-btn{width:100%;padding:12px;background:#fbf8f1;border:1.5px dashed #BA7517;color:#BA7517;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit}
-  .add-btn:hover{background:#fff5e0}
-  .add-btn:disabled{opacity:.4;cursor:not-allowed}
-
-  /* 큰 숫자 3개 */
-  .bignums{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .bignum{background:#fff;border-radius:14px;padding:20px 14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-  .bignum .lbl{font-size:12px;color:#7a736a;font-weight:600;margin-bottom:8px}
-  .bignum .val{font-size:26px;font-weight:800;letter-spacing:-.5px}
-  .bignum .sub{font-size:11px;color:#a09a8f;margin-top:4px}
+  /* 핵심 요약 */
+  .bignums{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  .bignum{background:#fff;border-radius:14px;padding:18px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .bignum .lbl{font-size:11px;color:#7a736a;font-weight:700;margin-bottom:8px;letter-spacing:.2px}
+  .bignum .val{font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+  .bignum .sub{font-size:11px;color:#a09a8f;margin-top:6px}
   .pos{color:#1D9E75}
   .neg{color:#c0392b}
   .gold{color:#BA7517}
+
+  /* 제품 카드 */
+  .schedule-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px}
+  .schedule-header h2{margin-bottom:0}
+  .sku-total{font-size:12px;color:#7a736a;background:#f5f1e8;padding:5px 12px;border-radius:999px;white-space:nowrap;font-weight:600}
+  .sku-total b{color:#BA7517;font-size:14px;font-weight:800}
+
+  .product-card{border:1px solid #ece7dc;border-radius:12px;padding:16px;margin-bottom:12px;background:#fbfaf6}
+  .product-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed #ece7dc}
+  .product-num{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:#2c2926}
+  .product-num::before{content:"";display:inline-block;width:6px;height:18px;background:#BA7517;border-radius:3px}
+  .remove-product{background:transparent;border:1px solid #ece7dc;color:#c0392b;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1;font-family:inherit}
+  .remove-product:hover{background:#fff4ed;border-color:#c0392b}
+
+  .product-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:14px}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:12px;font-weight:700;color:#2c2926;line-height:1.3}
+  .field label small{display:inline;font-size:10px;color:#a09a8f;font-weight:500;margin-left:4px}
+  .field select,.field input{padding:9px 11px;border:1px solid #ece7dc;border-radius:8px;font-size:14px;font-weight:600;color:#2c2926;background:#fff;font-family:inherit;width:100%}
+  .field input{text-align:right}
+  .field select:focus,.field input:focus{outline:none;border-color:#BA7517;background:#fff8ef}
+
+  .product-results{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:12px;border-top:1px dashed #ece7dc}
+  .result-item{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+  .result-label{font-size:11px;color:#7a736a;font-weight:600}
+  .result-value{font-size:15px;font-weight:800;letter-spacing:-.3px}
+
+  .add-btn{width:100%;padding:12px;background:#fbf8f1;border:1.5px dashed #BA7517;color:#BA7517;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit}
+  .add-btn:hover{background:#fff5e0}
+  .add-btn:disabled{opacity:.4;cursor:not-allowed}
 
   /* 차트 */
   .chart-card{padding:18px}
   .chart-card canvas{max-height:300px}
 
-  /* 결론 박스 */
-  .conclusion{background:#BA7517;color:#fff;border-radius:14px;padding:22px;text-align:center;font-size:18px;font-weight:600;letter-spacing:-.3px;line-height:1.5}
-  .conclusion b{color:#fff8e7;font-size:22px;font-weight:800}
+  /* 결론 */
+  .conclusion{background:#BA7517;color:#fff;border-radius:14px;padding:22px;text-align:center;font-size:17px;font-weight:600;letter-spacing:-.3px;line-height:1.5;margin-bottom:18px}
+  .conclusion b{color:#fff8e7;font-size:21px;font-weight:800}
   .conclusion.warn{background:#c0392b}
   .conclusion .small{display:block;font-size:13px;font-weight:400;color:rgba(255,255,255,.85);margin-top:8px}
 
-  /* 경고 라인 */
-  .warn-line{margin-top:14px;padding:12px 16px;background:#fff4ed;border-left:4px solid #c0392b;border-radius:6px;color:#8b2820;font-size:13px;font-weight:500}
-  .warn-line.hidden{display:none}
+  /* 세금 카드 */
+  .tax-card{background:#fffaf0;border:1px solid #f0e5cc}
+  .tax-grid{display:grid;gap:6px;margin:8px 0 14px}
+  .tax-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#fff;border-radius:8px;font-size:13px}
+  .tax-item span{color:#7a736a;font-weight:500}
+  .tax-item b{color:#2c2926;font-weight:800;font-size:14px}
+  .tax-item.highlight{background:#BA7517;color:#fff}
+  .tax-item.highlight span{color:rgba(255,255,255,.85)}
+  .tax-item.highlight b{color:#fff;font-size:16px}
+  .tax-disclaimer{font-size:12px;color:#7a4f0a;line-height:1.6;background:#fff8e7;padding:12px 14px;border-radius:8px;border-left:4px solid #BA7517}
 
   /* 모바일 */
   @media (max-width:640px){
     body{padding:16px 10px}
     header h1{font-size:22px}
     .card{padding:16px}
-    .inputs .row{grid-template-columns:1fr;gap:6px;padding:12px 0}
-    .inputs label{font-size:13px}
-    .inputs input[type="number"]{width:100%}
-    .schedule-row{grid-template-columns:1fr 1fr 36px;gap:8px}
     .bignums{grid-template-columns:1fr;gap:10px}
-    .bignum{padding:16px;display:flex;align-items:center;justify-content:space-between;text-align:left}
-    .bignum .lbl{margin:0}
-    .bignum .val{font-size:22px}
-    .conclusion{font-size:16px;padding:18px}
+    .bignum{padding:14px;display:flex;align-items:center;justify-content:space-between;text-align:left}
+    .bignum .lbl{margin:0;flex:1}
+    .bignum .val{font-size:20px}
+    .bignum .sub{margin-top:0;text-align:right}
+    .conclusion{font-size:15px;padding:18px}
     .conclusion b{font-size:18px}
     .topbar{justify-content:center;margin-bottom:10px}
     .topbar a{font-size:12px;padding:6px 11px}
+    .product-fields{grid-template-columns:1fr;gap:10px}
+    .product-results{grid-template-columns:1fr;gap:6px}
+    .result-item{flex-direction:row;justify-content:space-between;align-items:center;padding:6px 10px;background:#fff;border-radius:6px}
+    .tax-item{flex-direction:column;align-items:flex-start;gap:4px}
   }
 </style>
 </head>
@@ -100,66 +113,14 @@
 <div class="wrap">
   <nav class="topbar" id="topbar"></nav>
   <a class="back-link" href="../">← 도구 모음으로</a>
+
   <header>
-    <h1>내 통장은 언제 플러스가 될까?</h1>
-    <p>쿠팡 로켓그로스 현금흐름 시뮬레이터 · SKU별 출시 시점까지 반영</p>
+    <h1>쿠팡 <b>마진구조</b> 시뮬레이터</h1>
+    <p>감이 아닌 숫자로 판단하는 쿠팡 셀러 시뮬레이터.<br>
+       제품마다 마진·END ROAS·12개월 통장 잔고를 한눈에 볼 수 있어요.</p>
   </header>
 
-  <!-- 입력 6개 -->
-  <div class="card inputs">
-    <h2>SKU 1개 기준 사양 (모든 SKU에 동일 적용)</h2>
-
-    <div class="row">
-      <label>① 판매가 <small>쿠팡에서 파는 가격</small></label>
-      <input type="range" id="r-price" min="1000" max="100000" step="100" value="10000">
-      <input type="number" id="n-price" value="10000" min="0">
-    </div>
-
-    <div class="row">
-      <label>② 원가 <small>중국 매입가 등</small></label>
-      <input type="range" id="r-cost" min="0" max="50000" step="100" value="3000">
-      <input type="number" id="n-cost" value="3000" min="0">
-    </div>
-
-    <div class="row">
-      <label>③ 쿠팡 수수료 % <small>부가세 포함</small></label>
-      <input type="range" id="r-fee" min="0" max="30" step="0.1" value="12.88">
-      <input type="number" id="n-fee" value="12.88" min="0" step="0.01">
-    </div>
-
-    <div class="row">
-      <label>④ 입출고+배송비 <small>1개당, 원</small></label>
-      <input type="range" id="r-logi" min="0" max="10000" step="50" value="2150">
-      <input type="number" id="n-logi" value="2150" min="0">
-    </div>
-
-    <div class="row">
-      <label>⑤ 광고비 % <small>매출 대비, 부가세 포함</small></label>
-      <input type="range" id="r-ad" min="0" max="40" step="0.1" value="11">
-      <input type="number" id="n-ad" value="11" min="0" step="0.01">
-    </div>
-
-    <div class="row">
-      <label>⑥ SKU당 월 판매수량 <small>SKU 1개가 한 달에 몇 개 팔리는지</small></label>
-      <input type="range" id="r-qty" min="1" max="10000" step="10" value="1000">
-      <input type="number" id="n-qty" value="1000" min="0">
-    </div>
-  </div>
-
-  <!-- 제품 출시 일정 -->
-  <div class="card">
-    <div class="schedule-header">
-      <h2>📅 제품 출시 일정</h2>
-      <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
-    </div>
-    <p class="schedule-desc">SKU를 여러 시점에 나눠 출시할 때 사용하세요. 각 행은 "그 달에 새로 추가되는 SKU 수"입니다. 모든 SKU는 위 사양을 동일하게 사용합니다.</p>
-
-    <div id="schedule-list"></div>
-
-    <button class="add-btn" id="add-btn">+ 출시 일정 추가</button>
-  </div>
-
-  <!-- 큰 숫자 3개 -->
+  <!-- 핵심 요약 -->
   <div class="bignums">
     <div class="bignum">
       <div class="lbl">월 매출 (풀가동 시)</div>
@@ -178,6 +139,19 @@
     </div>
   </div>
 
+  <!-- 제품 정보 -->
+  <div class="card">
+    <div class="schedule-header">
+      <h2>제품 정보</h2>
+      <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
+    </div>
+    <p class="desc">제품마다 사양이 다르면 각각 입력하세요. 모든 값은 <b>VAT 포함 금액</b>으로 입력합니다. 출시 월이 다르면 그 시점부터 매출이 합산됩니다.</p>
+
+    <div id="products-list"></div>
+
+    <button class="add-btn" id="add-btn">+ 제품 추가</button>
+  </div>
+
   <!-- 차트 -->
   <div class="card chart-card">
     <h2>12개월 통장 잔고 추이 <small style="font-weight:400;color:#a09a8f">· 정산 2개월 뒤 입금 기준</small></h2>
@@ -189,128 +163,125 @@
     값을 조정해보세요
   </div>
 
-  <!-- 경고 -->
-  <div class="warn-line hidden" id="warn">
-    ⚠ 마진율 30% 미만은 일반적으로 추천하지 않는 구간이에요. 더 좋은 조건의 제품을 찾아보세요.
+  <!-- 예상 세금 -->
+  <div class="card tax-card">
+    <h2>📊 예상 세금 (1년차 기준)</h2>
+    <p class="desc">위 시뮬레이션 1년치 기준으로 추정한 세금입니다. 종합소득세는 누진세율 + 지방소득세 10% 포함.</p>
+    <div class="tax-grid">
+      <div class="tax-item">
+        <span>연 매출 (전체 제품)</span>
+        <b id="tax-rev">-</b>
+      </div>
+      <div class="tax-item">
+        <span>연 마진액 (VAT 포함)</span>
+        <b id="tax-profit">-</b>
+      </div>
+      <div class="tax-item">
+        <span>예상 부가세 (납부)</span>
+        <b id="tax-vat">-</b>
+      </div>
+      <div class="tax-item">
+        <span>예상 종합소득세 + 지방세</span>
+        <b id="tax-income">-</b>
+      </div>
+      <div class="tax-item highlight">
+        <span>예상 세금 합계</span>
+        <b id="tax-total">-</b>
+      </div>
+    </div>
+    <div class="tax-disclaimer">
+      ⚠️ 위 숫자는 단순 추정치입니다. 실제 결정세액은 <b>매입증빙·간이과세·다른 소득·인적공제·특별공제·세액공제 등</b>에 따라 크게 달라질 수 있어요. 정확한 세무 계산은 세무사와 상담하시고, 이 화면은 의사결정용 참고치로만 사용하세요.
+    </div>
   </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 const $ = id => document.getElementById(id);
+const fmt = v => Math.round(v).toLocaleString();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// 슬라이더 ↔ 숫자 양방향 바인딩
-['price','cost','fee','logi','ad','qty'].forEach(k => {
-  const r = $('r-'+k), n = $('n-'+k);
-  r.addEventListener('input', () => { n.value = r.value; render(); });
-  n.addEventListener('input', () => { r.value = n.value; render(); });
-});
+// 기본 제품
+const DEFAULT_PRODUCT = {
+  month: 1, count: 1,
+  price: 10000, cost: 3000,
+  feePct: 12.88, logi: 2150,
+  adPct: 11, vatPct: 10,
+  qty: 1000
+};
 
-// 출시 일정 상태 (기본값: 1월에 1개 출시)
-let schedule = [{ month: 1, count: 1 }];
+let products = [{ ...DEFAULT_PRODUCT }];
 
-function renderSchedule() {
-  const list = $('schedule-list');
-  list.innerHTML = '';
-  schedule.forEach((row, i) => {
-    const div = document.createElement('div');
-    div.className = 'schedule-row';
-
-    const monthOpts = Array.from({length: 12}, (_, m) => {
-      const v = m + 1;
-      return `<option value="${v}" ${row.month === v ? 'selected' : ''}>${v}월</option>`;
-    }).join('');
-
-    div.innerHTML = `
-      <div>
-        <label>출시 시점</label>
-        <select data-i="${i}" data-field="month">${monthOpts}</select>
-      </div>
-      <div>
-        <label>추가 SKU 수</label>
-        <input class="num" type="number" data-i="${i}" data-field="count" value="${row.count}" min="1" max="100">
-      </div>
-      <button class="remove-btn ${schedule.length === 1 ? 'placeholder' : ''}" data-i="${i}" aria-label="삭제">×</button>
-    `;
-    list.appendChild(div);
-  });
-
-  // 이벤트 바인딩
-  list.querySelectorAll('select, input.num').forEach(el => {
-    el.addEventListener('input', e => {
-      const i = +e.target.dataset.i;
-      const field = e.target.dataset.field;
-      const val = +e.target.value || (field === 'count' ? 1 : 1);
-      schedule[i][field] = val;
-      render();
-    });
-  });
-  list.querySelectorAll('.remove-btn:not(.placeholder)').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const i = +e.target.dataset.i;
-      schedule.splice(i, 1);
-      if (schedule.length === 0) schedule = [{ month: 1, count: 1 }];
-      renderSchedule();
-      render();
-    });
-  });
-
-  // 추가 버튼 비활성화 조건: 행이 12개 이상이면 (실용적 한도)
-  $('add-btn').disabled = schedule.length >= 12;
+// 한국 종합소득세 + 지방소득세 10% 가산
+function calcIncomeTax(profit) {
+  if (profit <= 0) return 0;
+  let tax;
+  if (profit <=   14000000) tax = profit * 0.06;
+  else if (profit <=   50000000) tax = profit * 0.15 -   1260000;
+  else if (profit <=   88000000) tax = profit * 0.24 -   5760000;
+  else if (profit <=  150000000) tax = profit * 0.35 -  15440000;
+  else if (profit <=  300000000) tax = profit * 0.38 -  19940000;
+  else if (profit <=  500000000) tax = profit * 0.40 -  25940000;
+  else if (profit <= 1000000000) tax = profit * 0.42 -  35940000;
+  else                          tax = profit * 0.45 -  65940000;
+  return tax * 1.1; // 지방소득세
 }
 
-$('add-btn').addEventListener('click', () => {
-  // 마지막 행의 다음 달 + 1 SKU
-  const lastMonth = Math.max(...schedule.map(s => s.month));
-  const nextMonth = Math.min(lastMonth + 1, 12);
-  schedule.push({ month: nextMonth, count: 1 });
-  renderSchedule();
-  render();
-});
-
-function fmtWon(v){
-  const a = Math.abs(v);
-  const s = v < 0 ? '-' : '';
-  if (a >= 100000000) return s + (a/100000000).toFixed(2) + '억';
-  if (a >= 10000) return s + Math.round(a/10000).toLocaleString() + '만';
-  return s + Math.round(a).toLocaleString();
+function calcProduct(p) {
+  const revenue = p.price * p.qty;
+  const costAmt = p.cost  * p.qty;
+  const feeAmt  = revenue * (p.feePct / 100);
+  const logiAmt = p.logi  * p.qty;
+  const adAmt   = revenue * (p.adPct / 100);
+  const profit  = revenue - costAmt - feeAmt - logiAmt - adAmt;
+  const marginPct = revenue > 0 ? (profit / revenue) * 100 : 0;
+  const beforeAd = revenue - costAmt - feeAmt - logiAmt;
+  const endRoas  = beforeAd > 0 ? (revenue / beforeAd) * 100 : 0;
+  return {
+    p, revenue, costAmt, feeAmt, logiAmt, adAmt, profit, marginPct, endRoas,
+    immediateOut: costAmt,
+    settlementIn: revenue - feeAmt - logiAmt - adAmt
+  };
 }
 
-function calc(){
-  const price = +$('n-price').value || 0;
-  const cost  = +$('n-cost').value  || 0;
-  const fee   = +$('n-fee').value   || 0;
-  const logi  = +$('n-logi').value  || 0;
-  const ad    = +$('n-ad').value    || 0;
-  const qty   = +$('n-qty').value   || 0;
-
-  // SKU 1개당 월 단위 수치
-  const revenuePerSku   = price * qty;
-  const costPerSku      = cost  * qty;
-  const feePerSku       = revenuePerSku * (fee / 100);
-  const logiPerSku      = logi  * qty;
-  const adPerSku        = revenuePerSku * (ad / 100);
-  const profitPerSku    = revenuePerSku - costPerSku - feePerSku - logiPerSku - adPerSku;
-  const marginPct       = revenuePerSku > 0 ? (profitPerSku / revenuePerSku) * 100 : 0;
-  const immediateOutPerSku = costPerSku;
-  const settlementInPerSku = revenuePerSku - feePerSku - logiPerSku - adPerSku;
-
-  // m월 시점에 누적된 활성 SKU 수
-  const skusAt = (m) => schedule
-    .filter(s => s.month <= m)
-    .reduce((sum, s) => sum + (s.count || 0), 0);
-  const totalSkus = skusAt(12);
+function calcAll() {
+  const calcs = products.map(calcProduct);
 
   // 12개월 통장 잔고
   const balance = [];
   let bal = 0;
   for (let m = 1; m <= 12; m++) {
-    bal -= skusAt(m) * immediateOutPerSku;       // 이번 달 활성 SKU 전체의 매입원가
-    if (m > 2) bal += skusAt(m - 2) * settlementInPerSku;  // 2개월 전 활성 SKU 정산금
+    let immediate = 0, settling = 0;
+    for (const c of calcs) {
+      if (c.p.month <= m)     immediate += c.p.count * c.immediateOut;
+      if (c.p.month <= m - 2) settling  += c.p.count * c.settlementIn;
+    }
+    bal += -immediate + settling;
     balance.push(Math.round(bal));
   }
 
-  // 변곡점: 처음 0 이상 (단, SKU가 1개 이상일 때만 의미 있음)
+  const totalSkus   = products.reduce((s, p) => s + (+p.count || 0), 0);
+  const peakRevenue = calcs.reduce((s, c) => s + c.revenue * c.p.count, 0);
+  const peakProfit  = calcs.reduce((s, c) => s + c.profit  * c.p.count, 0);
+
+  // 연 매출/마진/세금
+  let annualRevenue = 0, annualProfit = 0, annualVAT = 0;
+  for (const c of calcs) {
+    const months = Math.max(0, 13 - c.p.month);
+    const aRev    = c.revenue * c.p.count * months;
+    const aProfit = c.profit  * c.p.count * months;
+    const vatRate = c.p.vatPct;
+    const productVAT = aProfit * (vatRate / (100 + vatRate));
+    annualRevenue += aRev;
+    annualProfit  += aProfit;
+    annualVAT     += productVAT;
+  }
+  const taxableIncome = annualProfit - annualVAT;
+  const incomeTax = calcIncomeTax(taxableIncome);
+  const totalTax  = annualVAT + incomeTax;
+
+  // 변곡점
   let bep = null;
   if (totalSkus > 0) {
     for (let i = 0; i < balance.length; i++) {
@@ -319,27 +290,155 @@ function calc(){
   }
 
   return {
-    revenuePerSku, profitPerSku, marginPct,
-    revenueTotal: revenuePerSku * totalSkus,
-    profitTotal:  profitPerSku  * totalSkus,
-    balance, bep, totalSkus
+    calcs, balance, peakRevenue, peakProfit, totalSkus, bep,
+    annualRevenue, annualProfit, annualVAT, taxableIncome, incomeTax, totalTax
   };
+}
+
+function renderProducts() {
+  const list = $('products-list');
+  list.innerHTML = '';
+
+  products.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.i = i;
+
+    const monthOpts = Array.from({length: 12}, (_, m) => {
+      const v = m + 1;
+      return `<option value="${v}" ${p.month === v ? 'selected' : ''}>${v}월</option>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="product-header">
+        <span class="product-num">제품 #${i + 1}</span>
+        ${products.length > 1 ? `<button class="remove-product" aria-label="삭제">×</button>` : ''}
+      </div>
+      <div class="product-fields">
+        <div class="field">
+          <label>출시 월 <small>1~12월</small></label>
+          <select data-field="month">${monthOpts}</select>
+        </div>
+        <div class="field">
+          <label>SKU 수 <small>이 시점에 동시 출시</small></label>
+          <input type="number" data-field="count" value="${p.count}" min="1" max="100">
+        </div>
+        <div class="field">
+          <label>판매가 <small>+VAT</small></label>
+          <input type="number" data-field="price" value="${p.price}" min="0" step="100">
+        </div>
+        <div class="field">
+          <label>원가 <small>+VAT</small></label>
+          <input type="number" data-field="cost" value="${p.cost}" min="0" step="100">
+        </div>
+        <div class="field">
+          <label>판매 수수료 % <small>VAT 포함</small></label>
+          <input type="number" data-field="feePct" value="${p.feePct}" min="0" max="50" step="0.01">
+        </div>
+        <div class="field">
+          <label>입출고배송비 <small>1개당, +VAT</small></label>
+          <input type="number" data-field="logi" value="${p.logi}" min="0" step="50">
+        </div>
+        <div class="field">
+          <label>광고비 % <small>매출 대비, +VAT</small></label>
+          <input type="number" data-field="adPct" value="${p.adPct}" min="0" max="50" step="0.01">
+        </div>
+        <div class="field">
+          <label>부가세 % <small>한국 일반 10%</small></label>
+          <input type="number" data-field="vatPct" value="${p.vatPct}" min="0" max="25" step="0.1">
+        </div>
+        <div class="field" style="grid-column:1 / -1">
+          <label>월 판매량 <small>한 달에 몇 개</small></label>
+          <input type="number" data-field="qty" value="${p.qty}" min="0" step="10">
+        </div>
+      </div>
+      <div class="product-results">
+        <div class="result-item">
+          <span class="result-label">마진액 (월)</span>
+          <span class="result-value margin-amt">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">마진율</span>
+          <span class="result-value margin-pct">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">END ROAS</span>
+          <span class="result-value end-roas gold">-</span>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  // 이벤트 바인딩
+  list.querySelectorAll('select, input').forEach(el => {
+    el.addEventListener('input', e => {
+      const card = e.target.closest('.product-card');
+      const i = +card.dataset.i;
+      const field = e.target.dataset.field;
+      const val = +e.target.value;
+      products[i][field] = isNaN(val) ? 0 : val;
+      render();
+    });
+  });
+  list.querySelectorAll('.remove-product').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const card = e.target.closest('.product-card');
+      const i = +card.dataset.i;
+      products.splice(i, 1);
+      if (products.length === 0) products.push({ ...DEFAULT_PRODUCT });
+      renderProducts();
+      render();
+    });
+  });
+
+  $('add-btn').disabled = products.length >= 12;
+}
+
+$('add-btn').addEventListener('click', () => {
+  // 마지막 제품 복제 + 출시월 +1 (캡 12)
+  const last = products[products.length - 1] || DEFAULT_PRODUCT;
+  const newP = { ...last, month: Math.min((last.month || 1) + 1, 12) };
+  products.push(newP);
+  renderProducts();
+  render();
+});
+
+function updateProductResults(calcs) {
+  calcs.forEach((c, i) => {
+    const card = document.querySelector(`.product-card[data-i="${i}"]`);
+    if (!card) return;
+    const monthly = c.profit * c.p.count;
+    const ma = card.querySelector('.margin-amt');
+    ma.textContent = (monthly >= 0 ? '+' : '') + fmt(monthly) + '원';
+    ma.className = 'result-value margin-amt ' + (monthly >= 0 ? 'pos' : 'neg');
+    const mp = card.querySelector('.margin-pct');
+    mp.textContent = c.marginPct.toFixed(1) + '%';
+    mp.className = 'result-value margin-pct ' + (c.marginPct >= 30 ? 'pos' : (c.marginPct >= 0 ? 'gold' : 'neg'));
+    const er = card.querySelector('.end-roas');
+    if (!isFinite(c.endRoas) || c.endRoas <= 0) {
+      er.textContent = '∞';
+    } else {
+      er.textContent = fmt(c.endRoas) + '%';
+    }
+  });
 }
 
 let chartInst = null;
 
-function render(){
-  $('sku-total').textContent = schedule.reduce((s, r) => s + (r.count || 0), 0);
+function render() {
+  $('sku-total').textContent = fmt(products.reduce((s, p) => s + (+p.count || 0), 0));
 
-  const r = calc();
+  const r = calcAll();
 
-  // 큰 숫자
-  $('rev').textContent = fmtWon(r.revenueTotal) + '원';
+  // 핵심 요약
+  $('rev').textContent = fmt(r.peakRevenue) + '원';
   $('rev-sub').textContent = r.totalSkus + '개 SKU 풀가동 시';
 
-  $('profit').textContent = (r.profitTotal >= 0 ? '+' : '') + fmtWon(r.profitTotal) + '원';
-  $('profit').className = 'val ' + (r.profitTotal >= 0 ? 'pos' : 'neg');
-  $('profit-sub').textContent = '마진율 ' + r.marginPct.toFixed(1) + '% (개별 SKU)';
+  $('profit').textContent = (r.peakProfit >= 0 ? '+' : '') + fmt(r.peakProfit) + '원';
+  $('profit').className = 'val ' + (r.peakProfit >= 0 ? 'pos' : 'neg');
+  const avgMargin = r.peakRevenue > 0 ? (r.peakProfit / r.peakRevenue) * 100 : 0;
+  $('profit-sub').textContent = '평균 마진율 ' + avgMargin.toFixed(1) + '%';
 
   if (r.bep === null) {
     $('bep').textContent = r.totalSkus === 0 ? '—' : '12개월+';
@@ -351,6 +450,16 @@ function render(){
     $('bep-sub').textContent = r.bep + '개월 후 통장 플러스 전환';
   }
 
+  // 제품 카드 결과 업데이트
+  updateProductResults(r.calcs);
+
+  // 세금
+  $('tax-rev').textContent     = fmt(r.annualRevenue) + '원';
+  $('tax-profit').textContent  = fmt(r.annualProfit) + '원';
+  $('tax-vat').textContent     = fmt(r.annualVAT) + '원';
+  $('tax-income').textContent  = fmt(r.incomeTax) + '원';
+  $('tax-total').textContent   = fmt(r.totalTax) + '원';
+
   // 차트
   const labels = Array.from({length: 12}, (_, i) => (i+1) + '월');
   const data = r.balance.map(v => +(v/10000).toFixed(0));
@@ -361,7 +470,7 @@ function render(){
     data: {
       labels,
       datasets: [{
-        label: '통장 잔고 (만원)',
+        label: '통장 잔고',
         data,
         borderColor: '#BA7517',
         borderWidth: 3,
@@ -385,7 +494,10 @@ function render(){
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: c => ' ' + (c.raw >= 0 ? '+' : '') + c.raw.toLocaleString() + '만원'
+            label: c => {
+              const won = Math.round(c.raw * 10000);
+              return ' ' + (won >= 0 ? '+' : '') + won.toLocaleString() + '원';
+            }
           }
         }
       },
@@ -396,42 +508,47 @@ function render(){
             color: ctx => ctx.tick.value === 0 ? 'rgba(0,0,0,.4)' : 'rgba(0,0,0,.04)',
             lineWidth: ctx => ctx.tick.value === 0 ? 1.5 : 1
           },
-          ticks: { color: '#7a736a', font: { size: 11 }, callback: v => v + '만' }
+          ticks: {
+            color: '#7a736a',
+            font: { size: 11 },
+            callback: v => {
+              const a = Math.abs(v);
+              if (a >= 10000) return (v / 10000).toFixed(1) + '억';
+              return v.toLocaleString() + '만';
+            }
+          }
         }
       }
     }
   });
 
-  // 결론 한 줄
+  // 결론
   const concl = $('concl');
   const skuPrefix = r.totalSkus > 1 ? `<b>${r.totalSkus}개 SKU</b> 운영 시 — ` : '';
 
   if (r.totalSkus === 0) {
     concl.className = 'conclusion';
-    concl.innerHTML = '출시 일정에서 <b>SKU를 추가</b>해 보세요';
-  } else if (r.profitPerSku < 0) {
+    concl.innerHTML = '제품을 추가하고 값을 입력하세요';
+  } else if (r.peakProfit < 0) {
     concl.className = 'conclusion warn';
     concl.innerHTML = skuPrefix + '<b>매달 적자</b>입니다.<span class="small">원가를 낮추거나 판매가를 올려보세요</span>';
   } else if (r.bep === null) {
     concl.className = 'conclusion warn';
-    concl.innerHTML = skuPrefix + '마진은 나지만 <b>1년 내 통장 회복 어려움</b><span class="small">마진율 ' + r.marginPct.toFixed(1) + '% — 너무 낮거나 SKU 출시가 너무 늦음</span>';
+    concl.innerHTML = skuPrefix + '마진은 나지만 <b>1년 내 통장 회복 어려움</b><span class="small">평균 마진율 ' + avgMargin.toFixed(1) + '% — 너무 낮거나 SKU 출시가 너무 늦음</span>';
   } else {
     concl.className = 'conclusion';
-    concl.innerHTML = skuPrefix + '마진율 <b>' + r.marginPct.toFixed(1) + '%</b> · <b>' + r.bep + '개월</b> 버티면 통장 플러스 전환<span class="small">12월 기준 월 순이익 +' + fmtWon(r.profitTotal) + '원 · 12개월 누적 ' + fmtWon(r.balance[11]) + '원</span>';
+    concl.innerHTML = skuPrefix + '평균 마진율 <b>' + avgMargin.toFixed(1) + '%</b> · <b>' + r.bep + '개월</b> 버티면 통장 플러스 전환<span class="small">12월 기준 월 순이익 +' + fmt(r.peakProfit) + '원 · 12개월 누적 ' + fmt(r.balance[11]) + '원</span>';
   }
-
-  // 30% 마진 경고 (개별 SKU 마진 기준)
-  $('warn').classList.toggle('hidden', r.marginPct >= 30 || r.profitPerSku < 0 || r.totalSkus === 0);
 }
 
-renderSchedule();
+// 초기화
+renderProducts();
 render();
 
 // 상단 채널 링크 바 로드
 (async function loadTopbar(){
   const bar = document.getElementById('topbar');
   if (!bar) return;
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   try {
     const res = await fetch('../links.json?t=' + Date.now(), { cache: 'no-cache' });
     if (!res.ok) return;
