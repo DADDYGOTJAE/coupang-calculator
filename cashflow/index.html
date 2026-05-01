@@ -151,10 +151,10 @@
       <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
     </div>
     <div class="info-tip">
-      <span class="lead">💡 입력 가이드 (쿠팡 데이터 그대로)</span>
-      • <b>판매가만</b> 부가세 포함 (쿠팡 상품페이지에 표시되는 가격 그대로)<br>
-      • <b>원가·판매수수료·입출고배송비·광고비는 부가세 별도</b> (쿠팡이 셀러에게 알려주는 데이터 그대로)<br>
-      • 부가세는 시뮬레이터가 자동으로 매출VAT − 매입VAT 계산 → 실제 납부액 추정<br>
+      <span class="lead">💡 입력 가이드 (쿠팡 데이터 + 매입영수증 기준)</span>
+      • <b>판매가, 원가</b>는 <b>부가세 포함</b> 금액 (쿠팡 표시가 / 실제 매입 지불액)<br>
+      • <b>판매수수료·입출고배송비·광고비</b>는 <b>부가세 별도</b> (쿠팡이 셀러에게 알려주는 데이터 그대로)<br>
+      • 부가세 자동 계산: <code>매출/11 − 원가/11 − (수수료+입출고+광고)/10</code> (VAT 10% 기준)<br>
       • 표시되는 마진액은 <b>광고비·매입세액 공제 후 실효 마진</b>입니다 (셀러가 실제 가져가는 돈)<br>
       • 제품마다 사양이 다르면 각 카드에 따로 입력 — 출시 월이 다르면 그 시점부터 매출 합산
     </div>
@@ -242,36 +242,37 @@ function calcIncomeTax(profit) {
 
 function calcProduct(p) {
   // 입력값:
-  //   판매가 P  : VAT 포함 (쿠팡 표시가)
-  //   원가 C, 수수료% F, 입출고비 L, 광고% A : VAT 별도 (쿠팡 데이터 그대로)
+  //   판매가 P, 원가 C   : VAT 포함 (실제 지불/수령 금액)
+  //   수수료% F, 입출고비 L, 광고% A : VAT 별도 (쿠팡이 셀러에게 제공하는 데이터 그대로)
   //   부가세% V (default 10)
-  const revenue = p.price * p.qty;                   // 매출 (VAT 포함)
-  const costAmt = p.cost  * p.qty;                    // 원가 (VAT 별도)
-  const feeAmt  = revenue * (p.feePct / 100);          // 수수료 (VAT 별도, 매출 기준)
+  const revenue = p.price * p.qty;                    // 매출 (VAT 포함)
+  const costAmt = p.cost  * p.qty;                    // 원가 (VAT 포함)
+  const feeAmt  = revenue * (p.feePct / 100);         // 수수료 (VAT 별도, 매출 기준)
   const logiAmt = p.logi  * p.qty;                    // 입출고비 (VAT 별도)
-  const adAmt   = revenue * (p.adPct / 100);           // 광고비 (VAT 별도, 매출 기준)
+  const adAmt   = revenue * (p.adPct / 100);          // 광고비 (VAT 별도, 매출 기준)
 
   // 부가세 (납부) = 매출VAT − 매입VAT
+  //   매출/원가는 VAT 포함이라 ×V/(100+V)로 VAT분 추출 (매출/11, 원가/11 스타일)
+  //   수수료/입출고/광고는 VAT 별도라 ×V/100으로 매입VAT 가산 (수수료/10 스타일)
   const v = p.vatPct || 0;
-  const outputVAT = v > 0 ? revenue * v / (100 + v) : 0;        // 매출에 포함된 VAT
-  const inputVAT_full = (costAmt + feeAmt + logiAmt + adAmt) * v / 100;  // 매입세액 (광고 포함)
-  const inputVAT_noAd = (costAmt + feeAmt + logiAmt) * v / 100;          // 매입세액 (광고 제외)
-  const vatRemit      = outputVAT - inputVAT_full;    // 실제 납부 부가세 (음수면 환급)
-  const vatRemit_noAd = outputVAT - inputVAT_noAd;    // END ROAS 분모용
+  const outVAT      = v > 0 ? revenue  * v / (100 + v) : 0;
+  const inVAT_cost  = v > 0 ? costAmt  * v / (100 + v) : 0;
+  const inVAT_other_full = (feeAmt + logiAmt + adAmt) * v / 100;
+  const inVAT_other_noAd = (feeAmt + logiAmt)         * v / 100;
+  const vatRemit      = outVAT - inVAT_cost - inVAT_other_full;  // 실제 납부 (음수면 환급)
+  const vatRemit_noAd = outVAT - inVAT_cost - inVAT_other_noAd;  // END ROAS 분모용
 
   // 마진액 (월) = 순마진 (광고 후, VAT 후) — 셀러가 실제 가져가는 돈
   const profit = revenue - costAmt - feeAmt - logiAmt - adAmt - vatRemit;
   const marginPct = revenue > 0 ? (profit / revenue) * 100 : 0;
 
   // END ROAS = 매출 / (매출 − 광고 외 비용 − 부가세) × 100
-  //          = 광고비 빼고 손익분기 되려면 ROAS 이만큼 나와야 함
   const beforeAd = revenue - costAmt - feeAmt - logiAmt - vatRemit_noAd;
   const endRoas  = beforeAd > 0 ? (revenue / beforeAd) * 100 : 0;
 
   return {
     p, revenue, costAmt, feeAmt, logiAmt, adAmt, vatRemit, vatRemit_noAd,
     profit, marginPct, endRoas,
-    // 현금흐름: 즉시 매입(VAT 별도 effective) + 정산 시 들어오는 cash(부가세 차감 반영)
     immediateOut: costAmt,
     settlementIn: revenue - feeAmt - logiAmt - adAmt - vatRemit
   };
@@ -357,7 +358,7 @@ function renderProducts() {
           <input type="number" data-field="price" value="${p.price}" min="0" step="100">
         </div>
         <div class="field">
-          <label>원가 <small>부가세 별도, 매입가</small></label>
+          <label>원가 <small>부가세 포함, 매입가</small></label>
           <input type="number" data-field="cost" value="${p.cost}" min="0" step="100">
         </div>
         <div class="field">
