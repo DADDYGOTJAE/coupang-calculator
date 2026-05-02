@@ -178,15 +178,15 @@
       </div>
       <div class="field">
         <label>원가 <small>부가세 포함</small></label>
-        <input type="number" id="cost" value="3000" min="0" step="100">
+        <input type="number" id="cost" value="2663" min="0" step="100">
       </div>
       <div class="field">
         <label>판매 수수료 % <small>부가세 별도</small></label>
-        <input type="number" id="feePct" value="12.88" min="0" max="50" step="0.01">
+        <input type="number" id="feePct" value="10.8" min="0" max="50" step="0.01">
       </div>
       <div class="field">
         <label>입출고배송비 <small>1개당, 부가세 별도</small></label>
-        <input type="number" id="logi" value="2150" min="0" step="50">
+        <input type="number" id="logi" value="2750" min="0" step="50">
       </div>
       <div class="field">
         <label>부가세 % <small>일반 10% / 면세 0</small></label>
@@ -254,7 +254,7 @@
 
     <div class="field">
       <label>쿠팡 광고센터에서 본 ROAS <small>이미 광고 돌리고 있다면 거기 표시값 입력</small></label>
-      <input type="number" id="adRoasListed" value="909" min="0" step="1" placeholder="예: 909">
+      <input type="number" id="adRoasListed" value="1000" min="0" step="1" placeholder="예: 1000">
     </div>
 
     <!-- ROAS 비교 막대 -->
@@ -323,25 +323,25 @@ const $ = id => document.getElementById(id);
 const fmt = v => Math.round(v).toLocaleString();
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// 예시 프리셋 (마진율 = 광고 전·VAT 후 기준)
+// 예시 프리셋 (마진율 = 광고 전·VAT 후 기준, 수수료 10.8% / 입출고 2,750원 / 월 1,000개 통일)
 const EXAMPLES = {
   // 평범한 제품 — 마진율 20.0%
   normal: {
     priceListed: 10000, priceFinal: 8000,
-    cost: 3091, feePct: 12.88, logi: 2150, vatPct: 10, qty: 1000,
-    adPct: 11, adRoasListed: 909
+    cost: 2663, feePct: 10.8, logi: 2750, vatPct: 10, qty: 1000,
+    adPct: 11, adRoasListed: 1000
   },
   // 마진 좋은 제품 — 마진율 40.0%
   high: {
     priceListed: 15000, priceFinal: 12000,
-    cost: 3061, feePct: 12.88, logi: 2150, vatPct: 10, qty: 500,
-    adPct: 11, adRoasListed: 1100
+    cost: 2714, feePct: 10.8, logi: 2750, vatPct: 10, qty: 1000,
+    adPct: 11, adRoasListed: 600
   },
   // 마진 적은 제품 — 마진율 10.0%
   low: {
-    priceListed: 8000, priceFinal: 6400,
-    cost: 2751, feePct: 12.88, logi: 2150, vatPct: 10, qty: 800,
-    adPct: 11, adRoasListed: 700
+    priceListed: 8000, priceFinal: 6500,
+    cost: 2368, feePct: 10.8, logi: 2750, vatPct: 10, qty: 1000,
+    adPct: 11, adRoasListed: 1000
   }
 };
 
