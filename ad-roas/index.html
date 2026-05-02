@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>쿠팡 광고 손익분기 시뮬레이터</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
+  .wrap{max-width:880px;margin:0 auto}
+
+  /* 상단 채널 링크 바 */
+  .topbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:14px;flex-wrap:wrap;min-height:32px}
+  .topbar a{display:inline-flex;align-items:center;gap:6px;background:#fff;padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:#2c2926;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .12s ease, color .12s ease}
+  .topbar a:hover{transform:translateY(-1px);color:#BA7517}
+  .topbar .icon{font-size:14px;line-height:1}
+  .back-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a736a;text-decoration:none;margin-bottom:12px}
+  .back-link:hover{color:#BA7517}
+
+  header{text-align:center;margin-bottom:24px}
+  header h1{font-size:28px;font-weight:800;letter-spacing:-.5px;color:#2c2926;line-height:1.25}
+  header h1 b{color:#BA7517}
+  header p{margin-top:8px;font-size:14px;color:#7a736a;line-height:1.55}
+
+  .card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:18px}
+  .card h2{font-size:16px;font-weight:800;color:#2c2926;margin-bottom:8px;letter-spacing:-.3px}
+  .card .desc{font-size:12px;color:#7a736a;margin-bottom:14px;line-height:1.55}
+
+  /* 빠른 예시 버튼 */
+  .example-card{padding:16px 18px;background:linear-gradient(135deg,#fff8e7,#fef0d4)}
+  .example-label{font-size:13px;font-weight:700;color:#7a4f0a;margin-bottom:10px}
+  .example-btns{display:flex;flex-wrap:wrap;gap:8px}
+  .example-btn{flex:1;min-width:140px;padding:11px 14px;background:#fff;border:1.5px solid #BA7517;color:#BA7517;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .12s ease}
+  .example-btn:hover{background:#BA7517;color:#fff}
+
+  /* 입력 가이드 */
+  .info-tip{background:#fff8e7;border-left:4px solid #BA7517;padding:12px 14px;border-radius:8px;font-size:12px;color:#7a4f0a;line-height:1.65;margin-bottom:14px}
+  .info-tip b{color:#2c2926}
+  .info-tip .lead{font-weight:800;color:#2c2926;display:block;margin-bottom:4px;font-size:13px}
+
+  /* 입력 필드 */
+  .product-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:12px;font-weight:700;color:#2c2926;line-height:1.3}
+  .field label small{display:inline;font-size:10px;color:#a09a8f;font-weight:500;margin-left:4px}
+  .field input{padding:9px 11px;border:1px solid #ece7dc;border-radius:8px;font-size:14px;font-weight:600;color:#2c2926;background:#fbf8f1;font-family:inherit;width:100%;text-align:right}
+  .field input:focus{outline:none;border-color:#BA7517;background:#fff8ef}
+
+  /* 자동 할인율 표시 */
+  .discount-display{background:#f5f1e8;border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#7a736a;font-weight:600;margin-top:4px}
+  .discount-display b{color:#BA7517;font-size:16px;font-weight:800;margin:0 4px}
+
+  /* 큰 숫자 카드 (2칸) */
+  .bignums-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+  .bignum-card{background:#fbfaf6;border:1px solid #ece7dc;border-radius:12px;padding:18px 14px;text-align:center}
+  .bignum-card.gold-bg{background:linear-gradient(135deg,#fff8e7,#fef0d4);border-color:#f0e5cc}
+  .bignum-label{font-size:11px;color:#7a736a;font-weight:700;margin-bottom:8px;letter-spacing:.2px}
+  .bignum-value{font-size:30px;font-weight:800;letter-spacing:-.7px;line-height:1.05}
+  .bignum-sub{font-size:11px;color:#7a736a;margin-top:6px;line-height:1.4;font-weight:500}
+  .pos{color:#1D9E75}
+  .neg{color:#c0392b}
+  .gold{color:#BA7517}
+
+  /* 마진 요약 */
+  .margin-summary{background:#f5f1e8;padding:12px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:#7a736a;font-weight:600}
+  .margin-summary b{color:#2c2926;font-size:18px;font-weight:800}
+  .margin-summary .margin-pct{color:#7a736a;font-weight:600;font-size:13px}
+
+  /* 광고비 슬라이더 + 3col 입력 */
+  .ad-slider-row{margin-bottom:14px}
+  .ad-slider-row label{display:block;font-size:12px;font-weight:700;color:#2c2926;margin-bottom:6px}
+  .ad-slider-row input[type="range"]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:#ece7dc;border-radius:3px;outline:none}
+  .ad-slider-row input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:#BA7517;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .ad-slider-row input[type="range"]::-moz-range-thumb{width:22px;height:22px;background:#BA7517;border-radius:50%;cursor:pointer;border:0}
+
+  .ad-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
+  .ad-hint{font-size:12px;color:#a09a8f;margin-top:4px;font-style:italic}
+
+  hr{border:0;border-top:1px dashed #ece7dc;margin:18px 0}
+
+  /* ROAS 비교 막대 */
+  .roas-bars{margin:16px 0;display:flex;flex-direction:column;gap:8px}
+  .roas-bar{display:grid;grid-template-columns:160px 1fr 80px;gap:10px;align-items:center;font-size:12px}
+  .roas-bar-label{font-weight:600;color:#7a736a}
+  .roas-bar-track{background:#ece7dc;border-radius:4px;height:18px;position:relative;overflow:hidden}
+  .roas-bar-fill{height:100%;border-radius:4px;transition:width .25s ease}
+  .roas-bar-fill.listed{background:#a09a8f}
+  .roas-bar-fill.real{background:#BA7517}
+  .roas-bar-fill.endRoas{background:#c0392b}
+  .roas-bar-fill.endRoas-listed{background:#e07b6c}
+  .roas-bar-value{font-weight:800;text-align:right;font-size:13px;color:#2c2926}
+
+  /* 판정 카드 */
+  .verdict{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:12px;margin-top:16px}
+  .verdict.ok{background:#e6f5ee;border-left:4px solid #1D9E75}
+  .verdict.warn{background:#fff8e7;border-left:4px solid #f5a623}
+  .verdict.bad{background:#fff4ed;border-left:4px solid #c0392b}
+  .verdict-icon{font-size:32px;line-height:1}
+  .verdict-title{font-size:16px;font-weight:800;color:#2c2926;line-height:1.3}
+  .verdict-sub{font-size:13px;color:#5a5550;margin-top:4px;line-height:1.5}
+
+  /* 결론 박스 */
+  .conclusion{background:#BA7517;color:#fff;border-radius:14px;padding:24px;text-align:center;margin-bottom:18px}
+  .conclusion-main{font-size:16px;font-weight:600;line-height:1.55}
+  .conclusion-main b{color:#fff8e7;font-size:32px;font-weight:800;display:inline-block;margin:6px 0}
+  .conclusion-sub{font-size:13px;color:rgba(255,255,255,.85);margin-top:8px;font-weight:500;line-height:1.5}
+
+  /* 용어 사전 */
+  .glossary{background:#fbfaf6;border:1px solid #ece7dc}
+  .glossary p{font-size:13px;color:#5a5550;margin-bottom:10px;line-height:1.65}
+  .glossary p:last-child{margin-bottom:0}
+  .glossary b{color:#2c2926;font-weight:700}
+
+  /* 모바일 */
+  @media (max-width:640px){
+    body{padding:16px 10px}
+    header h1{font-size:22px}
+    .card{padding:16px}
+    .product-fields{grid-template-columns:1fr;gap:10px}
+    .bignums-2col{grid-template-columns:1fr;gap:10px}
+    .bignum-value{font-size:26px}
+    .ad-3col{grid-template-columns:1fr}
+    .roas-bar{grid-template-columns:1fr;gap:4px}
+    .roas-bar-label{font-size:11px}
+    .roas-bar-track{height:16px}
+    .roas-bar-value{text-align:left;font-size:12px}
+    .conclusion-main b{font-size:26px}
+    .topbar{justify-content:center;margin-bottom:10px}
+    .topbar a{font-size:12px;padding:6px 11px}
+    .example-btn{flex:1 1 100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topbar" id="topbar"></nav>
+  <a class="back-link" href="../">← 도구 모음으로</a>
+
+  <header>
+    <h1>쿠팡 광고 <b>손익분기</b> 시뮬레이터</h1>
+    <p>광고 돌릴까 말까? 숫자로 답합니다.<br>
+       쿠팡 광고센터의 ROAS 함정도 같이 잡아드립니다.</p>
+  </header>
+
+  <!-- 빠른 예시 -->
+  <div class="card example-card">
+    <div class="example-label">🎯 빠르게 시작 — 예시 클릭</div>
+    <div class="example-btns">
+      <button class="example-btn" data-example="normal">평범한 제품</button>
+      <button class="example-btn" data-example="high">마진 좋은 제품</button>
+      <button class="example-btn" data-example="low">마진 적은 제품</button>
+    </div>
+  </div>
+
+  <!-- 1️⃣ 제품 정보 -->
+  <div class="card">
+    <h2>1️⃣ 제품 정보</h2>
+    <div class="info-tip">
+      <span class="lead">💡 등록가 vs 최종 할인가</span>
+      • <b>판매가 (등록가)</b>: 쿠팡 어드민에 등록한 가격 (광고센터 ROAS 계산 기준)<br>
+      • <b>최종 할인가</b>: 무프·쿠폰 적용 후 소비자가 실제 결제하는 가격 (정산 기준)<br>
+      • 두 가격 차이가 자동으로 할인율로 계산됩니다 — 무프든 쿠폰이든 다 반영
+    </div>
+
+    <div class="product-fields">
+      <div class="field">
+        <label>판매가 (등록가) <small>VAT 포함</small></label>
+        <input type="number" id="priceListed" value="10000" min="0" step="100">
+      </div>
+      <div class="field">
+        <label>최종 할인가 <small>VAT 포함, 실판매가</small></label>
+        <input type="number" id="priceFinal" value="8000" min="0" step="100">
+      </div>
+      <div class="discount-display" style="grid-column:1 / -1">
+        <span>자동 계산</span>
+        <span>할인율 <b id="discountPct">20.0</b>% (등록가 → 최종가)</span>
+      </div>
+      <div class="field">
+        <label>원가 <small>부가세 포함</small></label>
+        <input type="number" id="cost" value="3000" min="0" step="100">
+      </div>
+      <div class="field">
+        <label>판매 수수료 % <small>부가세 별도</small></label>
+        <input type="number" id="feePct" value="12.88" min="0" max="50" step="0.01">
+      </div>
+      <div class="field">
+        <label>입출고배송비 <small>1개당, 부가세 별도</small></label>
+        <input type="number" id="logi" value="2150" min="0" step="50">
+      </div>
+      <div class="field">
+        <label>부가세 % <small>일반 10% / 면세 0</small></label>
+        <input type="number" id="vatPct" value="10" min="0" max="25" step="0.1">
+      </div>
+      <div class="field" style="grid-column:1 / -1">
+        <label>월 판매량 <small>한 달에 몇 개</small></label>
+        <input type="number" id="qty" value="1000" min="0" step="10">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2️⃣ 광고 안 했을 때 (기준선) -->
+  <div class="card">
+    <h2>2️⃣ 광고 안 했을 때 (기준선)</h2>
+    <p class="desc">광고 돌리기 전, 손익분기 ROAS는 어디인가? 광고센터 화면 기준 + 진짜 기준 둘 다 표시</p>
+
+    <div class="bignums-2col">
+      <div class="bignum-card gold-bg">
+        <div class="bignum-label">📊 쿠팡 광고센터에서 봐야 할 손익분기 ROAS</div>
+        <div class="bignum-value gold" id="endRoasListed">-</div>
+        <div class="bignum-sub">광고센터 화면에서 이 숫자 이상 나와야 본전</div>
+      </div>
+      <div class="bignum-card">
+        <div class="bignum-label">⚡ 진짜 END ROAS (할인 적용 후)</div>
+        <div class="bignum-value" id="endRoasReal">-</div>
+        <div class="bignum-sub">실제 광고 효율의 손익분기 기준선</div>
+      </div>
+    </div>
+
+    <div class="margin-summary">
+      <span>월 순마진 (광고 0):</span>
+      <b id="marginNoAd">-</b>
+      <span class="margin-pct">(마진율 <span id="marginNoAdPct">-</span>%)</span>
+    </div>
+  </div>
+
+  <!-- 3️⃣ 광고 시뮬레이션 -->
+  <div class="card">
+    <h2>3️⃣ 광고 시뮬레이션</h2>
+    <p class="desc">광고비를 실제로 얼마나 쓸지, 광고센터에서 본 ROAS는 얼마인지 입력</p>
+
+    <div class="ad-slider-row">
+      <label>광고비 슬라이더 (월 매출 대비)</label>
+      <input type="range" id="adSlider" min="0" max="40" step="0.5" value="11">
+    </div>
+
+    <div class="ad-3col">
+      <div class="field">
+        <label>매출의 %</label>
+        <input type="number" id="adPct" value="11" min="0" max="50" step="0.1">
+      </div>
+      <div class="field">
+        <label>월 광고비 (원)</label>
+        <input type="number" id="adMonthly" value="880000" min="0" step="10000">
+      </div>
+      <div class="field">
+        <label>일 광고비 (원)</label>
+        <input type="number" id="adDaily" value="29333" min="0" step="1000">
+      </div>
+    </div>
+    <div class="ad-hint">💡 쿠팡이 광고 시작할 때 보통 일 30,000원 추천 — 일 광고비 칸에 직접 입력 가능</div>
+
+    <hr>
+
+    <div class="field">
+      <label>쿠팡 광고센터에서 본 ROAS <small>이미 광고 돌리고 있다면 거기 표시값 입력</small></label>
+      <input type="number" id="adRoasListed" value="909" min="0" step="1" placeholder="예: 909">
+    </div>
+
+    <!-- ROAS 비교 막대 -->
+    <div class="roas-bars" id="roasBars">
+      <div class="roas-bar">
+        <span class="roas-bar-label">광고센터 표시 ROAS</span>
+        <div class="roas-bar-track"><div class="roas-bar-fill listed" id="bar-listed" style="width:0%"></div></div>
+        <span class="roas-bar-value"><span id="val-listed">-</span>%</span>
+      </div>
+      <div class="roas-bar">
+        <span class="roas-bar-label">진짜 ROAS (할인 적용)</span>
+        <div class="roas-bar-track"><div class="roas-bar-fill real" id="bar-real" style="width:0%"></div></div>
+        <span class="roas-bar-value"><span id="val-real">-</span>%</span>
+      </div>
+      <div class="roas-bar">
+        <span class="roas-bar-label">END ROAS (광고센터 기준)</span>
+        <div class="roas-bar-track"><div class="roas-bar-fill endRoas-listed" id="bar-endListed" style="width:0%"></div></div>
+        <span class="roas-bar-value"><span id="val-endListed">-</span>%</span>
+      </div>
+      <div class="roas-bar">
+        <span class="roas-bar-label">END ROAS (실제 손익분기)</span>
+        <div class="roas-bar-track"><div class="roas-bar-fill endRoas" id="bar-end" style="width:0%"></div></div>
+        <span class="roas-bar-value"><span id="val-end">-</span>%</span>
+      </div>
+    </div>
+
+    <!-- 판정 -->
+    <div class="verdict" id="verdict">
+      <span class="verdict-icon" id="verdictIcon">⏳</span>
+      <div>
+        <div class="verdict-title" id="verdictTitle">값을 입력하세요</div>
+        <div class="verdict-sub" id="verdictSub">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4️⃣ 결론 박스 -->
+  <div class="conclusion">
+    <div class="conclusion-main">
+      🎯 사장님 광고센터에서 봐야 할 ROAS:<br>
+      <b><span id="targetRoas">-</span>%</b> 이상
+    </div>
+    <div class="conclusion-sub">
+      이 숫자보다 광고센터에서 낮게 나오면 광고 멈추세요 (할인 차감 후 손해)
+    </div>
+  </div>
+
+  <!-- 용어 설명 -->
+  <div class="card glossary">
+    <h2>📚 ROAS 쉽게 이해하기</h2>
+    <p><b>ROAS (Return On Ad Spend) = 광고 효율</b><br>
+       광고비 1원 써서 매출이 얼마 나왔는지<br>
+       예: 광고 1만원 → 매출 3만원 = ROAS 300%</p>
+    <p><b>END ROAS = 광고 손익분기 ROAS</b><br>
+       광고비를 광고비 외 모든 비용을 갚을 만큼 매출이 나와야 본전<br>
+       예: END ROAS 250% = 광고 1만원 쓰면 매출 2만 5천원은 나와야 본전</p>
+    <p><b>왜 광고센터 ROAS와 진짜 ROAS가 다른가?</b><br>
+       쿠팡 광고센터는 <b>등록한 판매가 기준</b>으로 매출 계산<br>
+       하지만 무료노출프로모션(무프)이나 쿠폰 때문에 실제 판매가는 더 낮음<br>
+       → 광고센터 표시 ROAS는 항상 실제보다 부풀려져 보임 (할인율만큼)</p>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = v => Math.round(v).toLocaleString();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// 예시 프리셋
+const EXAMPLES = {
+  normal: {
+    priceListed: 10000, priceFinal: 8000,
+    cost: 3000, feePct: 12.88, logi: 2150, vatPct: 10, qty: 1000,
+    adPct: 11, adRoasListed: 909
+  },
+  high: {
+    priceListed: 15000, priceFinal: 12000,
+    cost: 2500, feePct: 12.88, logi: 2150, vatPct: 10, qty: 500,
+    adPct: 11, adRoasListed: 1100
+  },
+  low: {
+    priceListed: 8000, priceFinal: 6500,
+    cost: 3500, feePct: 12.88, logi: 2150, vatPct: 10, qty: 800,
+    adPct: 11, adRoasListed: 700
+  }
+};
+
+function applyExample(key){
+  const e = EXAMPLES[key];
+  if (!e) return;
+  Object.entries(e).forEach(([k, v]) => {
+    const el = $(k);
+    if (el) el.value = v;
+  });
+  syncAdInputs('pct');
+  render();
+}
+
+document.querySelectorAll('.example-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyExample(btn.dataset.example));
+});
+
+// ===== 광고비 3-way sync =====
+function getAdBaseRevenue(){
+  // 광고비 % 의 기준 매출 = 최종 할인가 × 월 판매량 (실제 매출)
+  return (+$('priceFinal').value || 0) * (+$('qty').value || 0);
+}
+
+function syncAdInputs(source){
+  const baseRevenue = getAdBaseRevenue();
+  let pct = +$('adPct').value || 0;
+  let monthly = +$('adMonthly').value || 0;
+  let daily = +$('adDaily').value || 0;
+
+  if (source === 'pct') {
+    monthly = baseRevenue > 0 ? Math.round(baseRevenue * pct / 100) : 0;
+    daily   = Math.round(monthly / 30);
+  } else if (source === 'slider') {
+    pct = +$('adSlider').value;
+    $('adPct').value = pct.toFixed(1);
+    monthly = baseRevenue > 0 ? Math.round(baseRevenue * pct / 100) : 0;
+    daily   = Math.round(monthly / 30);
+  } else if (source === 'monthly') {
+    pct     = baseRevenue > 0 ? (monthly / baseRevenue) * 100 : 0;
+    daily   = Math.round(monthly / 30);
+  } else if (source === 'daily') {
+    monthly = daily * 30;
+    pct     = baseRevenue > 0 ? (monthly / baseRevenue) * 100 : 0;
+  }
+
+  $('adPct').value     = pct.toFixed(1);
+  $('adMonthly').value = monthly;
+  $('adDaily').value   = daily;
+  $('adSlider').value  = Math.min(40, Math.max(0, pct));
+}
+
+$('adSlider').addEventListener('input', () => { syncAdInputs('slider'); render(); });
+$('adPct').addEventListener('input',     () => { syncAdInputs('pct');     render(); });
+$('adMonthly').addEventListener('input', () => { syncAdInputs('monthly'); render(); });
+$('adDaily').addEventListener('input',   () => { syncAdInputs('daily');   render(); });
+
+// 제품 정보가 변하면 광고 base 매출도 변하므로 재계산
+['priceListed','priceFinal','cost','feePct','logi','vatPct','qty','adRoasListed'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    if (id === 'priceFinal' || id === 'qty') {
+      syncAdInputs('pct'); // 매출 변경 → 광고비 원 단위 재계산
+    }
+    render();
+  });
+});
+
+// ===== 계산 =====
+function calc(){
+  const P_l = +$('priceListed').value || 0;
+  const P_f = +$('priceFinal').value || 0;
+  const C   = +$('cost').value || 0;
+  const F   = +$('feePct').value || 0;
+  const L   = +$('logi').value || 0;
+  const V   = +$('vatPct').value || 0;
+  const Q   = +$('qty').value || 0;
+  const adP = +$('adPct').value || 0;
+  const adRoas = +$('adRoasListed').value || 0;
+
+  const discount = P_l > 0 ? (P_l - P_f) / P_l : 0;
+  const discountPct = discount * 100;
+
+  const revenueListed = P_l * Q;
+  const revenueReal   = P_f * Q;
+
+  const costAmt = C * Q;
+  const feeAmt  = revenueReal * (F / 100);  // 수수료는 최종 할인가 기준
+  const logiAmt = L * Q;
+  const adAmt   = revenueReal * (adP / 100);  // 광고비 % 도 최종 할인가 기준
+
+  // 부가세 (광고 제외, END ROAS 계산용)
+  const outVAT       = V > 0 ? revenueReal * V / (100 + V) : 0;
+  const inVAT_cost   = V > 0 ? costAmt     * V / (100 + V) : 0;
+  const inVAT_other_noAd = (feeAmt + logiAmt)        * V / 100;
+  const inVAT_other_full = (feeAmt + logiAmt + adAmt)* V / 100;
+  const vatRemit_noAd = outVAT - inVAT_cost - inVAT_other_noAd;
+  const vatRemit_full = outVAT - inVAT_cost - inVAT_other_full;
+
+  // 마진 (광고 전, 실제 기준)
+  const marginNoAd    = revenueReal - costAmt - feeAmt - logiAmt - vatRemit_noAd;
+  const marginNoAdPct = revenueReal > 0 ? (marginNoAd / revenueReal) * 100 : 0;
+
+  // 마진 (광고 후, 실제 기준)
+  const marginAd    = revenueReal - costAmt - feeAmt - logiAmt - adAmt - vatRemit_full;
+  const marginAdPct = revenueReal > 0 ? (marginAd / revenueReal) * 100 : 0;
+
+  // END ROAS (실제 기준)
+  const endRoasReal = marginNoAd > 0 ? (revenueReal / marginNoAd) * 100 : 0;
+  // END ROAS (광고센터 기준 = 등록가로 환산)
+  const endRoasListed = (1 - discount) > 0 ? endRoasReal / (1 - discount) : 0;
+
+  // 진짜 ROAS = 광고센터 ROAS × (1 - 할인율)
+  const roasReal = adRoas * (1 - discount);
+
+  return {
+    P_l, P_f, Q, V,
+    discount, discountPct,
+    revenueListed, revenueReal,
+    costAmt, feeAmt, logiAmt, adAmt,
+    marginNoAd, marginNoAdPct,
+    marginAd, marginAdPct,
+    endRoasReal, endRoasListed,
+    adRoasListed: adRoas, roasReal
+  };
+}
+
+function render(){
+  const r = calc();
+
+  // 할인율
+  $('discountPct').textContent = r.discountPct.toFixed(1);
+
+  // 큰 숫자 카드
+  $('endRoasListed').textContent = r.endRoasListed > 0 ? fmt(r.endRoasListed) + '%' : '—';
+  $('endRoasReal').textContent   = r.endRoasReal   > 0 ? fmt(r.endRoasReal)   + '%' : '—';
+  $('endRoasReal').className = 'bignum-value ' + (r.endRoasReal > 0 ? 'pos' : 'neg');
+
+  // 마진 요약 (광고 전)
+  $('marginNoAd').textContent = (r.marginNoAd >= 0 ? '+' : '') + fmt(r.marginNoAd) + '원';
+  $('marginNoAdPct').textContent = r.marginNoAdPct.toFixed(1);
+
+  // ROAS 비교 막대 (스케일은 가장 큰 값 기준)
+  const maxRoas = Math.max(r.adRoasListed || 0, r.roasReal || 0, r.endRoasListed || 0, r.endRoasReal || 0, 1);
+  const setBar = (id, val) => {
+    const pct = Math.min(100, Math.max(0, (val / maxRoas) * 100));
+    document.getElementById('bar-' + id).style.width = pct + '%';
+  };
+  setBar('listed',    r.adRoasListed);
+  setBar('real',      r.roasReal);
+  setBar('endListed', r.endRoasListed);
+  setBar('end',       r.endRoasReal);
+
+  $('val-listed').textContent    = r.adRoasListed > 0 ? fmt(r.adRoasListed) : '0';
+  $('val-real').textContent      = r.roasReal > 0     ? fmt(r.roasReal)     : '0';
+  $('val-endListed').textContent = r.endRoasListed > 0 ? fmt(r.endRoasListed) : '0';
+  $('val-end').textContent       = r.endRoasReal > 0   ? fmt(r.endRoasReal)   : '0';
+
+  // 판정 (실제 ROAS vs 실제 END ROAS)
+  const verdictEl = $('verdict');
+  if (r.adRoasListed <= 0 || r.endRoasReal <= 0) {
+    verdictEl.className = 'verdict warn';
+    $('verdictIcon').textContent = '⏳';
+    $('verdictTitle').textContent = '광고센터 ROAS를 입력하세요';
+    $('verdictSub').textContent   = '쿠팡 광고센터에서 본 ROAS를 입력하면 자동으로 판정됩니다.';
+  } else {
+    const ratio = r.roasReal / r.endRoasReal;
+    if (ratio >= 1.5) {
+      verdictEl.className = 'verdict ok';
+      $('verdictIcon').textContent = '✅';
+      $('verdictTitle').textContent = '광고 효율 좋음 — 손익분기보다 ' + ratio.toFixed(1) + '배 높음';
+      $('verdictSub').textContent   = '광고 더 써도 OK. 마진 충분히 남음.';
+    } else if (ratio >= 1.0) {
+      verdictEl.className = 'verdict warn';
+      $('verdictIcon').textContent = '⚠️';
+      $('verdictTitle').textContent = '아슬아슬 — 손익분기 ' + ratio.toFixed(2) + '배 (1.0 이상)';
+      $('verdictSub').textContent   = '간신히 본전. 작은 변동(쿠폰 늘거나 단가 변동)에 손해 들어갈 수 있음.';
+    } else {
+      verdictEl.className = 'verdict bad';
+      $('verdictIcon').textContent = '❌';
+      $('verdictTitle').textContent = '광고 손해 — 손익분기 ' + ratio.toFixed(2) + '배 (1.0 미만)';
+      const gap = (r.endRoasReal - r.roasReal);
+      $('verdictSub').textContent   = '진짜 ROAS가 손익분기보다 ' + fmt(gap) + '%p 낮음. 광고 멈추거나 단가/원가 조정 필요.';
+    }
+  }
+
+  // 결론 박스 — 광고센터에서 봐야 할 목표 ROAS
+  $('targetRoas').textContent = r.endRoasListed > 0 ? fmt(r.endRoasListed) : '—';
+}
+
+// 초기화
+syncAdInputs('pct');
+render();
+
+// 상단 채널 링크 바 로드
+(async function loadTopbar(){
+  const bar = document.getElementById('topbar');
+  if (!bar) return;
+  try {
+    const res = await fetch('../links.json?t=' + Date.now(), { cache: 'no-cache' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const channels = data.channels || [];
+    if (channels.length === 0) { bar.style.display = 'none'; return; }
+    bar.innerHTML = channels.map(c => {
+      const icon = c.icon ? `<span class="icon">${esc(c.icon)}</span>` : '';
+      return `<a href="${esc(c.url)}" target="_blank" rel="noopener">${icon}${esc(c.label)}</a>`;
+    }).join('');
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
