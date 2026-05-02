@@ -30,8 +30,9 @@
   .example-card{padding:16px 18px;background:linear-gradient(135deg,#fff8e7,#fef0d4)}
   .example-label{font-size:13px;font-weight:700;color:#7a4f0a;margin-bottom:10px}
   .example-btns{display:flex;flex-wrap:wrap;gap:8px}
-  .example-btn{flex:1;min-width:140px;padding:11px 14px;background:#fff;border:1.5px solid #BA7517;color:#BA7517;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .12s ease}
+  .example-btn{flex:1;min-width:140px;padding:11px 14px;background:#fff;border:1.5px solid #BA7517;color:#BA7517;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .12s ease;line-height:1.35}
   .example-btn:hover{background:#BA7517;color:#fff}
+  .example-btn small{display:block;font-size:11px;font-weight:600;opacity:.8;margin-top:2px}
 
   /* 입력 가이드 */
   .info-tip{background:#fff8e7;border-left:4px solid #BA7517;padding:12px 14px;border-radius:8px;font-size:12px;color:#7a4f0a;line-height:1.65;margin-bottom:14px}
@@ -146,9 +147,9 @@
   <div class="card example-card">
     <div class="example-label">🎯 빠르게 시작 — 예시 클릭</div>
     <div class="example-btns">
-      <button class="example-btn" data-example="normal">평범한 제품</button>
-      <button class="example-btn" data-example="high">마진 좋은 제품</button>
-      <button class="example-btn" data-example="low">마진 적은 제품</button>
+      <button class="example-btn" data-example="normal">평범한 제품 <small>(마진율 20%)</small></button>
+      <button class="example-btn" data-example="high">마진 좋은 제품 <small>(마진율 40%)</small></button>
+      <button class="example-btn" data-example="low">마진 적은 제품 <small>(마진율 10%)</small></button>
     </div>
   </div>
 
@@ -322,21 +323,24 @@ const $ = id => document.getElementById(id);
 const fmt = v => Math.round(v).toLocaleString();
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// 예시 프리셋
+// 예시 프리셋 (마진율 = 광고 전·VAT 후 기준)
 const EXAMPLES = {
+  // 평범한 제품 — 마진율 20.0%
   normal: {
     priceListed: 10000, priceFinal: 8000,
-    cost: 3000, feePct: 12.88, logi: 2150, vatPct: 10, qty: 1000,
+    cost: 3091, feePct: 12.88, logi: 2150, vatPct: 10, qty: 1000,
     adPct: 11, adRoasListed: 909
   },
+  // 마진 좋은 제품 — 마진율 40.0%
   high: {
     priceListed: 15000, priceFinal: 12000,
-    cost: 2500, feePct: 12.88, logi: 2150, vatPct: 10, qty: 500,
+    cost: 3061, feePct: 12.88, logi: 2150, vatPct: 10, qty: 500,
     adPct: 11, adRoasListed: 1100
   },
+  // 마진 적은 제품 — 마진율 10.0%
   low: {
-    priceListed: 8000, priceFinal: 6500,
-    cost: 3500, feePct: 12.88, logi: 2150, vatPct: 10, qty: 800,
+    priceListed: 8000, priceFinal: 6400,
+    cost: 2751, feePct: 12.88, logi: 2150, vatPct: 10, qty: 800,
     adPct: 11, adRoasListed: 700
   }
 };
