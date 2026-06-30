@@ -292,7 +292,19 @@
   }
 
   const params = new URLSearchParams(window.location.search);
-  const isOpen = params.get('live') === '1' || params.get('open') === '1';
+  const openStorageKey = 'gotjae-live-kit-open';
+  if (params.get('lock') === '1') {
+    try { localStorage.removeItem(openStorageKey); } catch(e) {}
+  }
+
+  const queryOpens = params.get('live') === '1' || params.get('open') === '1';
+  if (queryOpens) {
+    try { localStorage.setItem(openStorageKey, '1'); } catch(e) {}
+  }
+
+  let savedOpen = false;
+  try { savedOpen = localStorage.getItem(openStorageKey) === '1'; } catch(e) {}
+  const isOpen = queryOpens || savedOpen;
 
   if (!isOpen) {
     root.innerHTML = `

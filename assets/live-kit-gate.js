@@ -3,7 +3,19 @@
   if (!list) return;
 
   const params = new URLSearchParams(window.location.search);
-  const isOpen = params.get('live') === '1' || params.get('open') === '1';
+  const storageKey = 'gotjae-live-kit-open';
+  if (params.get('lock') === '1') {
+    try { localStorage.removeItem(storageKey); } catch(e) {}
+  }
+
+  const queryOpens = params.get('live') === '1' || params.get('open') === '1';
+  if (queryOpens) {
+    try { localStorage.setItem(storageKey, '1'); } catch(e) {}
+  }
+
+  let savedOpen = false;
+  try { savedOpen = localStorage.getItem(storageKey) === '1'; } catch(e) {}
+  const isOpen = queryOpens || savedOpen;
   const notice = document.getElementById('liveKitNotice');
   const heroText = document.getElementById('liveKitHeroText');
 
