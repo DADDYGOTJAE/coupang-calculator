@@ -4,18 +4,25 @@
 
   const params = new URLSearchParams(window.location.search);
   const storageKey = 'gotjae-live-kit-open';
+  const cookieName = 'gotjaeLiveKitOpen';
+  const setOpenCookie = () => { document.cookie = cookieName + '=1; max-age=86400; path=/; SameSite=Lax'; };
+  const clearOpenCookie = () => { document.cookie = cookieName + '=; max-age=0; path=/; SameSite=Lax'; };
+  const hasOpenCookie = () => document.cookie.split(';').some(cookie => cookie.trim() === cookieName + '=1');
+
   if (params.get('lock') === '1') {
     try { localStorage.removeItem(storageKey); } catch(e) {}
+    clearOpenCookie();
   }
 
   const queryOpens = params.get('live') === '1' || params.get('open') === '1';
   if (queryOpens) {
     try { localStorage.setItem(storageKey, '1'); } catch(e) {}
+    setOpenCookie();
   }
 
   let savedOpen = false;
   try { savedOpen = localStorage.getItem(storageKey) === '1'; } catch(e) {}
-  const isOpen = queryOpens || savedOpen;
+  const isOpen = queryOpens || savedOpen || hasOpenCookie();
   const notice = document.getElementById('liveKitNotice');
   const heroText = document.getElementById('liveKitHeroText');
 
