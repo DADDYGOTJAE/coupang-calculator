@@ -291,6 +291,31 @@
     return;
   }
 
+  const params = new URLSearchParams(window.location.search);
+  const isOpen = params.get('live') === '1' || params.get('open') === '1';
+
+  if (!isOpen) {
+    root.innerHTML = `
+      <header class="hero">
+        <span class="eyebrow">라이브 중 공개</span>
+        <h1>${esc(kit.eyebrow)}</h1>
+        <p>이 자료는 무료 라이브 참여자에게 라이브 중 공개됩니다. 지금은 자료 목록만 확인해주세요.</p>
+      </header>
+
+      <div class="notice">
+        <b>아직 열람 전입니다.</b><br>
+        라이브 중 공개되는 링크로 접속하면 체크리스트 본문을 볼 수 있습니다.
+      </div>
+
+      <section class="cta-band">
+        <h2>자료는 라이브 흐름에 맞춰 순서대로 공개됩니다.</h2>
+        <p>먼저 사전 자료로 현재 상황을 진단하고, 라이브 중에 소싱·기획·제작·등록·광고 체크리스트를 하나씩 열어보세요.</p>
+        <a class="btn primary" href="../">참여 자료 목록으로 돌아가기</a>
+      </section>
+    `;
+    return;
+  }
+
   const storageKey = 'gotjae-live-kit-' + root.dataset.kit;
   let checked = {};
   try { checked = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch(e) { checked = {}; }
