@@ -1,9 +1,16 @@
 {
   "channels": [
     {
-      "icon": "📺",
+      "type": "youtube",
+      "icon": "▶",
       "label": "대디갓재 유튜브",
       "url": "https://www.youtube.com/@대디갓재"
+    },
+    {
+      "type": "course",
+      "icon": "🎓",
+      "label": "쿠팡병법 정규강의 신청하기",
+      "url": "https://gotjae.liveklass.com/classes/308088"
     }
   ]
 }

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>쿠팡 월 300만원 가능성 진단표 | 대디갓재</title>
+<meta name="description" content="쿠팡으로 월 300만원을 목표로 잡을 때 현재 병목이 소싱, 기획, 제작, 실행환경 중 어디인지 확인하는 무료 진단표입니다.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px 64px;min-height:100vh}
+  .wrap{max-width:880px;margin:0 auto}
+
+  .sticky-shell{position:sticky;top:0;z-index:95;margin:-24px -16px 24px;padding:10px 16px 12px;background:rgba(245,241,232,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(222,210,191,.7)}
+  .sticky-inner{max-width:880px;margin:0 auto}
+  .is-scrolled .sticky-shell{box-shadow:0 8px 22px rgba(54,36,15,.12)}
+  .is-scrolled .sticky-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+  .topbar{display:flex;justify-content:flex-end;gap:8px;margin:0 0 10px;padding:0;flex-wrap:wrap;min-height:40px}
+  .topbar a{display:inline-flex;align-items:center;gap:7px;background:#fff;padding:9px 16px;border-radius:999px;font-size:14px;font-weight:850;color:#2c2926;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .12s ease, color .12s ease, background .12s ease}
+  .topbar a:hover{transform:translateY(-1px);color:#BA7517}
+  .topbar .icon{font-size:14px;line-height:1}
+  .topbar .youtube-logo{display:inline-flex;width:20px;height:20px;color:#ff0033}
+  .topbar .youtube-logo svg{display:block;width:100%;height:100%}
+  .topbar .nav-course{background:#fff;color:#2c2926}
+  .topbar .nav-course:hover{color:#BA7517}
+  .countdown{display:none;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(135deg,#2c2926,#4a2f14);color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px 22px;margin:0;box-shadow:0 12px 28px rgba(54,36,15,.18);font-size:14px}
+  .countdown.show{display:flex}
+  .countdown .count-label{font-size:15px;font-weight:950;color:#f7e7cf;letter-spacing:.2px;white-space:nowrap}
+  .countdown strong{font-size:22px;font-weight:950;color:#fff;letter-spacing:.2px}
+  .count-units{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+  .count-unit{min-width:74px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);border-radius:13px;padding:9px 11px;text-align:center}
+  .count-unit b{display:block;font-size:26px;font-weight:950;line-height:1;color:#fff;letter-spacing:-.4px}
+  .count-unit em{display:block;margin-top:4px;font-style:normal;font-size:11px;font-weight:850;color:#e8ded0}
+  .is-scrolled .topbar{order:2;margin:0;min-height:0}
+  .is-scrolled .topbar a{padding:8px 14px;font-size:13px}
+  .is-scrolled .countdown{order:1;min-width:0;padding:10px 14px;border-radius:14px;box-shadow:0 8px 18px rgba(54,36,15,.16)}
+  .is-scrolled .countdown .count-label{font-size:12px}
+  .is-scrolled .countdown strong{font-size:16px}
+  .is-scrolled .count-unit{min-width:58px;padding:6px 8px}
+  .is-scrolled .count-unit b{font-size:19px}
+  .is-scrolled .count-unit em{font-size:9px;margin-top:2px}
+  .back-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a736a;text-decoration:none;margin-bottom:12px}
+  .back-link:hover{color:#BA7517}
+
+  header{text-align:center;margin-bottom:24px}
+  .badge{display:inline-block;background:#fff;color:#BA7517;font-size:12px;font-weight:800;padding:6px 14px;border-radius:999px;letter-spacing:.3px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:12px}
+  header h1{font-size:30px;font-weight:850;letter-spacing:-.6px;color:#2c2926;line-height:1.2}
+  header h1 b{color:#BA7517}
+  header p{margin:10px auto 0;font-size:14px;color:#7a736a;line-height:1.6;max-width:620px}
+
+  .status{background:rgba(245,241,232,.92);border-bottom:1px solid #ece7dc;margin:0 -16px 18px;padding:12px 16px 10px}
+  .status-inner{max-width:880px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+  .progress{height:9px;background:#e2d9c9;border-radius:999px;overflow:hidden}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#BA7517,#e6a13f);border-radius:999px;transition:width .2s ease}
+  .progress-meta{font-size:12px;font-weight:700;color:#7a736a;white-space:nowrap}
+  .progress-meta b{color:#2c2926}
+
+  .lead{background:#fff;border:1px solid #ece7dc;border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .lead strong{display:block;font-size:15px;font-weight:850;color:#2c2926;margin-bottom:6px}
+  .lead p{font-size:13px;color:#7a736a;line-height:1.65}
+
+  .question{background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:14px;border:1.5px solid transparent}
+  .question.active{border-color:#BA7517}
+  .q-top{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px}
+  .q-num{flex:0 0 auto;background:#2c2926;color:#fff;border-radius:999px;width:28px;height:28px;display:grid;place-items:center;font-size:13px;font-weight:850}
+  .q-title{font-size:16px;font-weight:850;letter-spacing:-.3px;color:#2c2926;line-height:1.35}
+  .q-sub{font-size:12px;color:#7a736a;margin-top:4px;line-height:1.5}
+  .options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .option{border:1.5px solid #ece7dc;background:#fbfaf6;color:#2c2926;border-radius:12px;padding:13px 14px;text-align:left;font-family:inherit;cursor:pointer;transition:all .12s ease;min-height:58px}
+  .option:hover{border-color:#d6c7ae;background:#fff8ef}
+  .option.selected{border-color:#BA7517;background:#fff3da;box-shadow:0 4px 12px rgba(186,117,23,.12)}
+  .option b{display:block;font-size:14px;font-weight:800;line-height:1.35}
+  .option span{display:block;font-size:12px;color:#7a736a;margin-top:3px;line-height:1.4}
+
+  .result{display:none;background:#fff;border-radius:18px;padding:24px;box-shadow:0 4px 22px rgba(80,53,18,.08);margin-top:20px;border:1px solid #ece7dc}
+  .result.show{display:block}
+  .score-row{display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:center;margin-bottom:22px}
+  .score-ring{height:180px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#BA7517 0deg,#ece7dc 0deg);position:relative}
+  .score-ring::after{content:"";position:absolute;inset:13px;background:#fff;border-radius:50%}
+  .score-text{position:relative;z-index:1;text-align:center}
+  .score-text b{display:block;font-size:42px;line-height:1;font-weight:900;letter-spacing:-1px}
+  .score-text span{font-size:12px;color:#7a736a;font-weight:700}
+  .grade-badge{display:inline-block;background:#2c2926;color:#fff;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:800;margin-bottom:10px}
+  .result h2{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:8px;line-height:1.28}
+  .result h2 b{color:#BA7517}
+  .result-desc{font-size:14px;color:#7a736a;line-height:1.65}
+
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+  .summary{background:#fbfaf6;border:1px solid #ece7dc;border-radius:13px;padding:14px}
+  .summary .label{font-size:11px;color:#7a736a;font-weight:800;margin-bottom:6px;letter-spacing:.2px}
+  .summary .value{font-size:15px;font-weight:850;color:#2c2926;line-height:1.35}
+
+  .section{border-top:1px dashed #e3d8c6;padding-top:18px;margin-top:18px}
+  .section h3{font-size:15px;font-weight:850;margin-bottom:10px;color:#2c2926}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#fff3da;border:1px solid #ebd2aa;color:#7a4f0a;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800}
+  .tasks{display:grid;gap:8px}
+  .task{display:flex;gap:10px;align-items:flex-start;background:#fbfaf6;border:1px solid #ece7dc;border-radius:12px;padding:12px 14px}
+  .task .mark{width:22px;height:22px;border-radius:7px;background:#BA7517;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:850;flex:0 0 auto}
+  .task p{font-size:13px;color:#2c2926;line-height:1.55}
+  .task p b{font-weight:850}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:13px 16px;font-family:inherit;font-size:14px;font-weight:850;cursor:pointer;text-decoration:none;transition:transform .12s ease, background .12s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{background:#BA7517;color:#fff}
+  .btn.dark{background:#2c2926;color:#fff}
+  .btn.ghost{background:#f5f1e8;color:#7a736a;border:1px solid #e3d8c6}
+
+  .footer-note{margin-top:18px;background:#fff;border-radius:14px;padding:18px;text-align:center;color:#7a736a;font-size:13px;line-height:1.6;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .footer-note b{color:#2c2926}
+
+  @media (max-width:720px){
+    body{padding:20px 12px 52px}
+    header h1{font-size:26px}
+    .status{margin-left:-12px;margin-right:-12px}
+    .status-inner{grid-template-columns:1fr}
+    .progress-meta{text-align:right}
+    .question{padding:18px}
+    .options{grid-template-columns:1fr}
+    .score-row{grid-template-columns:1fr;text-align:center}
+    .score-ring{margin:0 auto}
+    .summary-grid{grid-template-columns:1fr}
+    .actions{flex-direction:column}
+    .btn{width:100%}
+    .sticky-shell{margin:-20px -12px 20px;padding:8px 12px 10px}
+    .is-scrolled .sticky-inner{display:block}
+    .topbar{justify-content:center;margin:0 0 8px;min-height:40px}
+    .countdown{display:none;align-items:stretch;flex-direction:column;gap:12px;text-align:center;padding:17px 14px;border-radius:16px}
+    .countdown.show{display:flex}
+    .countdown .count-label{font-size:14px}
+    .count-units{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .count-unit{min-width:0;padding:8px 5px;border-radius:11px}
+    .count-unit b{font-size:20px}
+    .count-unit em{font-size:10px}
+    .is-scrolled .countdown{gap:8px;padding:10px 10px}
+    .is-scrolled .count-unit{padding:6px 4px}
+    .is-scrolled .count-unit b{font-size:16px}
+  }
+</style>
+</head>
+<body>
+<div class="sticky-shell">
+  <div class="sticky-inner">
+    <nav class="topbar" id="topbar"></nav>
+    <div class="countdown" id="liveCountdown" data-base="../"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <a class="back-link" href="../free-live/">← 사전 자료실로</a>
+
+  <header>
+    <span class="badge">무료 라이브 전용 진단</span>
+    <h1>쿠팡으로 <b>월 300만원</b><br>더 벌 가능성 진단표</h1>
+    <p>자료를 많이 받는 것보다 중요한 건, 지금 내 병목이 어디인지 아는 것입니다.</p>
+  </header>
+</div>
+
+<div class="status">
+  <div class="status-inner">
+    <div class="progress"><i id="progressFill"></i></div>
+    <div class="progress-meta"><b id="answeredCount">0</b> / <span id="totalCount">8</span>문항 완료</div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="lead">
+    <strong>점수가 낮게 나와도 괜찮습니다.</strong>
+    <p>이 진단표는 잘하는 사람을 고르는 시험이 아닙니다. 무료 라이브에서 어느 파트를 집중해서 들어야 하는지 찾기 위한 기준표입니다.</p>
+  </section>
+
+  <form id="diagnosisForm" aria-label="쿠팡 월 300만원 가능성 진단표"></form>
+
+  <section class="result" id="result">
+    <div class="score-row">
+      <div class="score-ring" id="scoreRing">
+        <div class="score-text">
+          <b id="scoreValue">0</b>
+          <span>100점 만점</span>
+        </div>
+      </div>
+      <div>
+        <span class="grade-badge" id="gradeBadge">진단 결과</span>
+        <h2 id="resultTitle">현재 상태를 계산 중입니다.</h2>
+        <p class="result-desc" id="resultDesc"></p>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary">
+        <div class="label">현재 병목</div>
+        <div class="value" id="bottleneckMain">-</div>
+      </div>
+      <div class="summary">
+        <div class="label">라이브 집중 파트</div>
+        <div class="value" id="focusMain">-</div>
+      </div>
+      <div class="summary">
+        <div class="label">다음 행동</div>
+        <div class="value" id="nextMain">-</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>라이브에서 꼭 확인할 것</h3>
+      <div class="chips" id="focusChips"></div>
+    </div>
+
+    <div class="section">
+      <h3>지금 바로 할 일</h3>
+      <div class="tasks" id="actionTasks"></div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn primary" id="copyBtn">결과 복사하기</button>
+      <button type="button" class="btn ghost" id="resetBtn">다시 진단하기</button>
+      <a class="btn dark" href="../free-live/">사전 자료실 보기</a>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    <b>입력값은 브라우저 안에만 저장됩니다.</b><br>
+    서버로 전송되지 않으니 편하게 실제 상황 기준으로 답해주세요.
+  </div>
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 'stage',
+    title: '현재 쿠팡 판매 단계는 어디에 가깝나요?',
+    sub: '월 300만원은 시작점보다 현재 위치를 정확히 알아야 계산됩니다.',
+    axis: 'execution',
+    options: [
+      { label: '시작 전', desc: '관심은 있지만 아직 상품 등록 전', score: 4, focus: ['소싱 기준', '실행 순서'] },
+      { label: '매출 0원', desc: '등록했지만 아직 팔리지 않음', score: 8, focus: ['상품 검증', '상세페이지'] },
+      { label: '월 100만원 이하', desc: '판매는 있지만 기준이 흔들림', score: 13, focus: ['마진 구조', '소싱 기준'] },
+      { label: '월 100~500만원', desc: '작게 팔리지만 확장이 막힘', score: 17, focus: ['차별화', '광고 운영'] },
+      { label: '월 500만원 이상', desc: '다음 단계로 키우고 싶음', score: 20, focus: ['운영 루틴', '확장 전략'] }
+    ]
+  },
+  {
+    id: 'pain',
+    title: '지금 가장 크게 막힌 부분은 무엇인가요?',
+    sub: '가장 답답한 지점이 현재 병목입니다.',
+    axis: 'bottleneck',
+    options: [
+      { label: '상품 소싱', desc: '뭘 팔아야 할지 모르겠음', score: 6, focus: ['소싱 기준', '빈틈시장'] },
+      { label: '마진 계산', desc: '팔아도 얼마 남는지 애매함', score: 8, focus: ['마진 구조', 'END ROAS'] },
+      { label: '상세페이지', desc: '좋은 상품도 설득이 안 됨', score: 8, focus: ['기획', '상세페이지'] },
+      { label: '상위노출/광고', desc: '노출과 광고 효율이 막힘', score: 10, focus: ['상품 등록', '광고 운영'] },
+      { label: '꾸준한 실행', desc: '알지만 계속 못 움직임', score: 5, focus: ['실행환경', '피드백 구조'] }
+    ]
+  },
+  {
+    id: 'sourcing',
+    title: '상품을 고를 때 쓰는 기준이 있나요?',
+    sub: '감으로 고르면 월 300만원은 운에 가까워집니다.',
+    axis: 'sourcing',
+    options: [
+      { label: '거의 없음', desc: '좋아 보이면 고르는 편', score: 0, focus: ['소싱 기준', '빈틈시장'] },
+      { label: '시장규모만 봄', desc: '검색량이나 매출 정도만 확인', score: 7, focus: ['빈틈시장', '경쟁강도'] },
+      { label: '경쟁강도까지 봄', desc: '로켓/판매자 로켓 비율도 봄', score: 13, focus: ['차별화', '상품 검증'] },
+      { label: '3가지 기준 있음', desc: '시장규모, 빈틈, 차별화까지 봄', score: 18, focus: ['확장 전략'] }
+    ]
+  },
+  {
+    id: 'margin',
+    title: '판매 전 마진과 END ROAS를 계산하나요?',
+    sub: '월 매출보다 중요한 건 1개 팔 때 실제로 남는 돈입니다.',
+    axis: 'margin',
+    options: [
+      { label: '계산 안 함', desc: '판매가부터 대략 정함', score: 0, focus: ['마진 구조'] },
+      { label: '마진율만 봄', desc: '대략 몇 퍼센트 남는지만 봄', score: 7, focus: ['END ROAS'] },
+      { label: '비용 일부 반영', desc: '수수료/입출고비 일부 계산', score: 12, focus: ['마진 구조', '광고 운영'] },
+      { label: '손익분기까지 봄', desc: '광고 돌려도 남는지 계산', score: 17, focus: ['광고 운영'] }
+    ]
+  },
+  {
+    id: 'planning',
+    title: '상세페이지 전에 리뷰와 소구점을 정리하나요?',
+    sub: '기획 없이 만든 상세페이지는 예뻐도 팔리지 않을 수 있습니다.',
+    axis: 'planning',
+    options: [
+      { label: '안 함', desc: '도매처 자료를 거의 그대로 씀', score: 0, focus: ['기획', '상세페이지'] },
+      { label: '리뷰만 훑음', desc: '경쟁사 리뷰를 대충 확인', score: 6, focus: ['리뷰 분석'] },
+      { label: '불만을 정리함', desc: '구매자 불만과 욕구를 뽑음', score: 12, focus: ['메인 소구점'] },
+      { label: '소구점까지 확정', desc: '문제, 해결, 근거를 정리하고 제작', score: 17, focus: ['상세페이지'] }
+    ]
+  },
+  {
+    id: 'production',
+    title: '썸네일과 상세페이지를 직접 개선할 수 있나요?',
+    sub: '제작 역량은 클릭률과 전환율을 바로 흔듭니다.',
+    axis: 'production',
+    options: [
+      { label: '거의 못 함', desc: '툴 사용도 부담스러움', score: 0, focus: ['제작 도구', '상세페이지'] },
+      { label: '템플릿 수정 가능', desc: '미리캔버스 정도는 가능', score: 7, focus: ['썸네일'] },
+      { label: 'AI 도구 활용', desc: '이미지/카피 생성 도구를 씀', score: 12, focus: ['제작 워크플로우'] },
+      { label: '전환 기준으로 제작', desc: '클릭/구매 기준으로 수정 가능', score: 16, focus: ['전환율 개선'] }
+    ]
+  },
+  {
+    id: 'time',
+    title: '하루에 실제로 투자 가능한 시간은 어느 정도인가요?',
+    sub: '시간이 적어도 괜찮지만, 반복 가능한 시간이 필요합니다.',
+    axis: 'execution',
+    options: [
+      { label: '30분 미만', desc: '현재는 거의 틈이 없음', score: 2, focus: ['실행환경'] },
+      { label: '30분~1시간', desc: '작게라도 매일 가능', score: 7, focus: ['실행 루틴'] },
+      { label: '1~2시간', desc: '상품 1개를 꾸준히 밀 수 있음', score: 12, focus: ['실행 루틴'] },
+      { label: '2시간 이상', desc: '피드백 받으면 속도가 붙을 수 있음', score: 15, focus: ['확장 전략'] }
+    ]
+  },
+  {
+    id: 'capital',
+    title: '초기 상품 테스트에 쓸 수 있는 자본은 어느 정도인가요?',
+    sub: '무리한 투자는 금물입니다. 다만 완전 무자본도 현실성이 낮습니다.',
+    axis: 'execution',
+    options: [
+      { label: '거의 없음', desc: '이번 달 생활비도 빠듯함', score: 1, focus: ['리스크 관리'] },
+      { label: '30만원 이하', desc: '작은 샘플 테스트만 가능', score: 6, focus: ['저자본 소싱'] },
+      { label: '30~100만원', desc: '초도 테스트 가능', score: 11, focus: ['상품 검증'] },
+      { label: '100만원 이상', desc: '검증 후 빠르게 실행 가능', score: 15, focus: ['실행 속도'] }
+    ]
+  }
+];
+
+const form = document.getElementById('diagnosisForm');
+const answers = {};
+const storageKey = 'gotjae_300_diagnosis_v1';
+
+function esc(value){
+  return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function loadAnswers(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    Object.assign(answers, saved);
+  } catch(e) {}
+}
+
+function saveAnswers(){
+  try { localStorage.setItem(storageKey, JSON.stringify(answers)); } catch(e) {}
+}
+
+function renderQuestions(){
+  form.innerHTML = QUESTIONS.map((question, index) => {
+    const selected = answers[question.id];
+    const options = question.options.map((option, optionIndex) => {
+      const isSelected = selected === optionIndex;
+      return `
+        <button class="option ${isSelected ? 'selected' : ''}" type="button" data-question="${esc(question.id)}" data-option="${optionIndex}" aria-pressed="${isSelected}">
+          <b>${esc(option.label)}</b>
+          <span>${esc(option.desc)}</span>
+        </button>
+      `;
+    }).join('');
+
+    return `
+      <section class="question ${selected == null ? '' : 'active'}" data-question-box="${esc(question.id)}">
+        <div class="q-top">
+          <div class="q-num">${index + 1}</div>
+          <div>
+            <div class="q-title">${esc(question.title)}</div>
+            <div class="q-sub">${esc(question.sub)}</div>
+          </div>
+        </div>
+        <div class="options">${options}</div>
+      </section>
+    `;
+  }).join('');
+  updateProgress();
+}
+
+function updateProgress(){
+  const answered = QUESTIONS.filter(q => answers[q.id] != null).length;
+  document.getElementById('answeredCount').textContent = answered;
+  document.getElementById('totalCount').textContent = QUESTIONS.length;
+  document.getElementById('progressFill').style.width = Math.round(answered / QUESTIONS.length * 100) + '%';
+  if (answered === QUESTIONS.length) renderResult();
+}
+
+function getSelected(question){
+  return question.options[answers[question.id]];
+}
+
+function getAnsweredOptions(){
+  return QUESTIONS
+    .filter(q => answers[q.id] != null)
+    .map(q => ({ question: q, option: getSelected(q) }));
+}
+
+function renderResult(){
+  const selected = getAnsweredOptions();
+  const rawScore = selected.reduce((sum, item) => sum + item.option.score, 0);
+  const maxScore = QUESTIONS.reduce((sum, q) => sum + Math.max(...q.options.map(o => o.score)), 0);
+  const score = Math.round(rawScore / maxScore * 100);
+
+  const axisScores = {};
+  selected.forEach(({ question, option }) => {
+    if (question.axis === 'bottleneck') return;
+    if (!axisScores[question.axis]) axisScores[question.axis] = { got: 0, max: 0 };
+    axisScores[question.axis].got += option.score;
+    axisScores[question.axis].max += Math.max(...question.options.map(o => o.score));
+  });
+
+  const axisLabels = {
+    sourcing: '소싱 기준',
+    margin: '마진 구조',
+    planning: '상품 기획',
+    production: '제작 역량',
+    execution: '실행환경'
+  };
+
+  const weakest = Object.entries(axisScores)
+    .map(([axis, value]) => ({ axis, pct: value.got / value.max }))
+    .sort((a, b) => a.pct - b.pct)[0];
+
+  const focusItems = [...new Set(selected.flatMap(item => item.option.focus))];
+  const pain = getSelected(QUESTIONS.find(q => q.id === 'pain')).label;
+  const mainFocus = weakest ? axisLabels[weakest.axis] : pain;
+  const grade = getGrade(score);
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('scoreValue').textContent = score;
+  document.getElementById('scoreRing').style.background = `conic-gradient(${grade.color} ${score * 3.6}deg,#ece7dc 0deg)`;
+  document.getElementById('gradeBadge').textContent = grade.badge;
+  document.getElementById('gradeBadge').style.background = grade.color;
+  document.getElementById('resultTitle').innerHTML = grade.title;
+  document.getElementById('resultDesc').textContent = grade.desc;
+  document.getElementById('bottleneckMain').textContent = mainFocus;
+  document.getElementById('focusMain').textContent = focusItems.slice(0, 2).join(' · ');
+  document.getElementById('nextMain').textContent = '결과 캡처 후 라이브 참여';
+  document.getElementById('focusChips').innerHTML = focusItems.map(item => `<span class="chip">${esc(item)}</span>`).join('');
+  document.getElementById('actionTasks').innerHTML = makeActions(score, mainFocus, pain).map((text, index) => `
+    <div class="task">
+      <div class="mark">${index + 1}</div>
+      <p>${text}</p>
+    </div>
+  `).join('');
+
+  setTimeout(() => document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+
+function getGrade(score){
+  if (score >= 75) {
+    return {
+      badge: '바로 실행형',
+      color: '#1D9E75',
+      title: '기준은 있습니다. 이제 <b>속도와 피드백</b>이 관건입니다.',
+      desc: '혼자서도 움직일 수 있는 상태입니다. 다만 월 300만원 목표라면 상품 선택과 전환율 개선에서 피드백을 받는 쪽이 훨씬 빠릅니다.'
+    };
+  }
+  if (score >= 55) {
+    return {
+      badge: '기준 보완형',
+      color: '#BA7517',
+      title: '가능성은 있습니다. 다만 <b>한두 군데 병목</b>이 큽니다.',
+      desc: '무작정 더 많은 자료를 보기보다, 지금 막힌 기준을 먼저 보완해야 합니다. 무료 라이브에서 본인 병목 파트를 집중해서 보세요.'
+    };
+  }
+  if (score >= 35) {
+    return {
+      badge: '피드백 필요형',
+      color: '#d97706',
+      title: '혼자 하면 오래 걸릴 수 있습니다. <b>기준 교정</b>이 먼저입니다.',
+      desc: '열심히 해도 결과가 안 나는 구간에 들어갈 가능성이 큽니다. 내 상품과 상세페이지를 누가 봐주는 구조가 필요합니다.'
+    };
+  }
+  return {
+    badge: '기초 세팅형',
+    color: '#c0392b',
+    title: '지금은 상품보다 <b>판단 기준</b>부터 잡아야 합니다.',
+    desc: '월 300만원이 불가능하다는 뜻은 아닙니다. 다만 현재는 소싱, 마진, 실행환경 중 최소 하나가 너무 약해서 순서부터 잡아야 합니다.'
+  };
+}
+
+function makeActions(score, mainFocus, pain){
+  const base = [
+    `오늘 결과에서 가장 낮은 병목은 <b>${esc(mainFocus)}</b>입니다. 라이브에서 이 파트가 나올 때 메모를 집중하세요.`,
+    `진단 점수와 병목을 캡처해두세요. 라이브 후반부 Q&A나 피드백 신청 때 바로 기준으로 쓸 수 있습니다.`
+  ];
+
+  if (score < 55) {
+    base.push(`지금은 새 자료를 더 모으기보다 <b>${esc(pain)}</b>을 해결할 한 가지 질문을 준비하는 게 좋습니다.`);
+  } else {
+    base.push('현재 판매 중이거나 검토 중인 상품 1개를 골라, 소싱시트에 숫자를 먼저 넣어보세요.');
+  }
+
+  return base;
+}
+
+form.addEventListener('click', event => {
+  const option = event.target.closest('.option');
+  if (!option) return;
+  const questionId = option.dataset.question;
+  const optionIndex = Number(option.dataset.option);
+  answers[questionId] = optionIndex;
+  saveAnswers();
+  renderQuestions();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  Object.keys(answers).forEach(key => delete answers[key]);
+  saveAnswers();
+  document.getElementById('result').classList.remove('show');
+  renderQuestions();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  const selected = getAnsweredOptions();
+  const resultText = [
+    '[쿠팡 월 300만원 가능성 진단 결과]',
+    '점수: ' + document.getElementById('scoreValue').textContent + '점',
+    '현재 병목: ' + document.getElementById('bottleneckMain').textContent,
+    '집중 파트: ' + document.getElementById('focusMain').textContent,
+    '',
+    ...selected.map(item => item.question.title + ' - ' + item.option.label)
+  ].join('\n');
+
+  try {
+    await navigator.clipboard.writeText(resultText);
+    document.getElementById('copyBtn').textContent = '복사 완료';
+    setTimeout(() => document.getElementById('copyBtn').textContent = '결과 복사하기', 1400);
+  } catch(e) {
+    alert(resultText);
+  }
+});
+
+loadAnswers();
+renderQuestions();
+
+</script>
+<script src="../assets/countdown.js"></script>
+<script src="../assets/sticky-header.js"></script>
+<script>
+
+(async function loadTopbar(){
+  const bar = document.getElementById('topbar');
+  if (!bar) return;
+  try {
+    const res = await fetch('../links.json?t=' + Date.now(), { cache: 'no-cache' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const channels = data.channels || [];
+    if (channels.length === 0) { bar.style.display = 'none'; return; }
+    bar.innerHTML = channels.map(c => {
+      const type = c.type ? ` nav-${esc(c.type)}` : '';
+      const icon = getIcon(c);
+      return `<a class="${type.trim()}" href="${esc(c.url)}" target="_blank" rel="noopener">${icon}${esc(c.label)}</a>`;
+    }).join('');
+  } catch(e) {}
+
+  function getIcon(c){
+    if (c.type === 'youtube') {
+      return '<span class="youtube-logo" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M21.6 7.2s-.2-1.5-.8-2.2c-.8-.9-1.7-.9-2.1-1C15.8 3.8 12 3.8 12 3.8s-3.8 0-6.7.2c-.4.1-1.3.1-2.1 1-.6.7-.8 2.2-.8 2.2S2.2 9 2.2 10.8v1.7c0 1.8.2 3.6.2 3.6s.2 1.5.8 2.2c.8.9 1.9.9 2.4 1 1.7.2 6.4.2 6.4.2s3.8 0 6.7-.2c.4-.1 1.3-.1 2.1-1 .6-.7.8-2.2.8-2.2s.2-1.8.2-3.6v-1.7c0-1.8-.2-3.6-.2-3.6Z" fill="currentColor"/><path d="M9.9 14.9V8.6l5.5 3.2-5.5 3.1Z" fill="#fff"/></svg></span>';
+    }
+    return c.icon ? `<span class="icon">${esc(c.icon)}</span>` : '';
+  }
+})();
+</script>
+</body>
+</html>
