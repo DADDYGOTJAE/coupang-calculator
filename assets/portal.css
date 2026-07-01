@@ -221,6 +221,10 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
 .cta-band{margin-top:18px;background:#2c2926;color:#fff;border-radius:16px;padding:22px;display:grid;gap:12px}
 .cta-band p{color:#dfd8cc;font-size:13px;line-height:1.65}
 .cta-band .btn{width:max-content}
+.chat-band{margin-top:18px;background:#fff;border:1px solid #ead2aa;border-radius:16px;padding:22px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.chat-band h2{font-size:18px;font-weight:900;letter-spacing:-.3px;color:var(--ink)}
+.chat-band p{font-size:13px;color:var(--muted);line-height:1.65}
+.chat-band .btn{width:max-content}
 @media (max-width:760px){
   body{padding:20px 12px 46px}
   .sticky-shell{margin:-20px -12px 20px;padding:8px 12px 10px}
@@ -255,5 +259,6 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
   .card{min-height:auto;padding:18px}
   .sheet-controls{grid-template-columns:1fr}
   .count-pill{min-height:38px;justify-content:center}
+  .chat-band .btn{width:100%}
   .cta-band .btn{width:100%}
 }

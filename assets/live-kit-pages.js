@@ -3,6 +3,7 @@
   if (!root) return;
 
   const courseUrl = 'https://gotjae.liveklass.com/classes/308088';
+  const chatUrl = 'https://m.site.naver.com/281tU';
 
   const kits = {
     'monthly-300': {
@@ -315,6 +316,12 @@
         <p>먼저 사전 자료로 현재 상황을 진단하고, 라이브 중에 소싱·기획·제작·등록·광고 체크리스트를 하나씩 열어보세요.</p>
         <a class="btn primary" href="../">참여 자료 목록으로 돌아가기</a>
       </section>
+
+      <section class="chat-band">
+        <h2>라이브 공지와 질문은 단톡방에서 확인해주세요.</h2>
+        <p>자료를 보다가 막히는 부분이 생기면 단톡방에 남겨주세요. 무료 라이브 안내와 참여 링크도 단톡방에서 함께 공유됩니다.</p>
+        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">무료 라이브 단톡방 입장하기</a>
+      </section>
     `;
     return;
   }
@@ -417,6 +424,12 @@
       <div class="kit-note"><b>라이브 활용법:</b> ${esc(kit.note)} 체크하면서 막히는 부분은 그대로 적어두셨다가 무료 라이브 Q&A에서 질문해주세요.</div>
 
       <button class="btn ghost kit-reset" type="button" id="kitReset">체크 초기화</button>
+
+      <section class="chat-band">
+        <h2>체크하다가 막히면 단톡방에 질문해주세요.</h2>
+        <p>혼자 오래 붙잡고 있기보다, 막히는 화면이나 고민 지점을 단톡방에 남겨주세요. 무료 라이브 공지와 참여 안내도 단톡방에서 함께 확인할 수 있습니다.</p>
+        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">무료 라이브 단톡방 입장하기</a>
+      </section>
 
       <section class="cta-band">
         <h2>체크하면서도 막힌다면, 피드백이 필요한 구간입니다.</h2>
