@@ -292,26 +292,10 @@
   }
 
   const params = new URLSearchParams(window.location.search);
-  const openStorageKey = 'gotjae-live-kit-open';
-  const openCookieName = 'gotjaeLiveKitOpen';
-  const setOpenCookie = () => { document.cookie = openCookieName + '=1; max-age=86400; path=/; SameSite=Lax'; };
-  const clearOpenCookie = () => { document.cookie = openCookieName + '=; max-age=0; path=/; SameSite=Lax'; };
-  const hasOpenCookie = () => document.cookie.split(';').some(cookie => cookie.trim() === openCookieName + '=1');
-
-  if (params.get('lock') === '1') {
-    try { localStorage.removeItem(openStorageKey); } catch(e) {}
-    clearOpenCookie();
-  }
-
   const queryOpens = params.get('live') === '1' || params.get('open') === '1';
-  if (queryOpens) {
-    try { localStorage.setItem(openStorageKey, '1'); } catch(e) {}
-    setOpenCookie();
-  }
-
-  let savedOpen = false;
-  try { savedOpen = localStorage.getItem(openStorageKey) === '1'; } catch(e) {}
-  const isOpen = queryOpens || savedOpen || hasOpenCookie();
+  const isOpen = queryOpens;
+  const backLink = document.querySelector('.back-link');
+  if (backLink && isOpen) backLink.setAttribute('href', '../?live=1');
 
   if (!isOpen) {
     root.innerHTML = `
