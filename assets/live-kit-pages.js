@@ -2,8 +2,7 @@
   const root = document.getElementById('kitPage');
   if (!root) return;
 
-  const courseUrl = 'https://gotjae.liveklass.com/classes/308088';
-  const chatUrl = 'https://m.site.naver.com/281tU';
+  const chatUrl = 'https://open.kakao.com/o/pAnuH13h';
 
   const kits = {
     'monthly-300': {
@@ -90,7 +89,7 @@
           ]
         }
       ],
-      note: '무료 라이브에서는 소싱 기준을 잡고, 정규강의에서는 실제 후보 상품을 놓고 왜 통과인지 왜 탈락인지 직접 피드백합니다.'
+      note: '무료 라이브에서는 소싱 기준을 잡고, 실제 후보 상품을 볼 때 어디를 먼저 확인해야 하는지 기준을 잡아드립니다.'
     },
     'planning-checklist': {
       eyebrow: '상품 기획 체크리스트',
@@ -185,7 +184,7 @@
       summary: [
         ['핵심 질문', '쿠팡 AI가 내 상품을 정확히 이해할 수 있게 등록했을까?'],
         ['사용 시점', '쿠팡윙 상품등록 화면을 열기 전과 등록 직후'],
-        ['라이브 포인트', '이 페이지는 큰 흐름만 잡습니다. 세부 화면별 입력은 정규강의에서 직접 보며 잡습니다']
+        ['라이브 포인트', '이 페이지는 큰 흐름을 먼저 잡는 용도입니다. 막히는 화면은 단톡방에 남겨두고 질문으로 가져와주세요']
       ],
       sections: [
         {
@@ -318,9 +317,9 @@
       </section>
 
       <section class="chat-band">
-        <h2>라이브 공지와 질문은 단톡방에서 확인해주세요.</h2>
-        <p>자료를 보다가 막히는 부분이 생기면 단톡방에 남겨주세요. 무료 라이브 안내와 참여 링크도 단톡방에서 함께 공유됩니다.</p>
-        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">무료 라이브 단톡방 입장하기</a>
+        <h2>진행하다가 막히는 순간, 혼자 끙끙대지 마세요.</h2>
+        <p>상품을 찾다가 답답하거나, 이게 맞는 방향인지 헷갈릴 때가 가장 많이 멈추는 구간입니다. 대디갓재와 직접 소통할 수 있는 단톡방에서 질문 남기고 방향을 바로 잡아보세요.</p>
+        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">대디갓재 소통방 입장하기</a>
       </section>
     `;
     return;
@@ -426,15 +425,9 @@
       <button class="btn ghost kit-reset" type="button" id="kitReset">체크 초기화</button>
 
       <section class="chat-band">
-        <h2>체크하다가 막히면 단톡방에 질문해주세요.</h2>
-        <p>혼자 오래 붙잡고 있기보다, 막히는 화면이나 고민 지점을 단톡방에 남겨주세요. 무료 라이브 공지와 참여 안내도 단톡방에서 함께 확인할 수 있습니다.</p>
-        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">무료 라이브 단톡방 입장하기</a>
-      </section>
-
-      <section class="cta-band">
-        <h2>체크하면서도 막힌다면, 피드백이 필요한 구간입니다.</h2>
-        <p>체크리스트는 방향을 잡아주지만, 내 상품이 실제로 통과인지 아닌지는 혼자 판단하기 어렵습니다. 쿠팡병법 정규강의에서는 대디갓재가 소싱·기획·등록·광고를 직접 보고 빠르게 자리를 잡을 수 있게 피드백합니다.</p>
-        <a class="btn primary" href="${courseUrl}" target="_blank" rel="noopener">쿠팡병법 정규강의 신청하기</a>
+        <h2>진행하다가 막히는 순간, 혼자 끙끙대지 마세요.</h2>
+        <p>자료를 보며 따라가다가 답답한 지점이 생기면 그대로 남겨주세요. 대디갓재와 직접 소통할 수 있는 단톡방에서 질문하고, 지금 어디서 막혔는지 같이 방향을 잡아보세요.</p>
+        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">대디갓재 소통방 입장하기</a>
       </section>
     `;
 
