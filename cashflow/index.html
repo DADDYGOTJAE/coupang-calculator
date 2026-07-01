@@ -55,7 +55,7 @@
   .card .desc{font-size:12px;color:#7a736a;margin-bottom:14px;line-height:1.55}
 
   /* 핵심 요약 */
-  .bignums{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  .bignums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
   .bignum{background:#fff;border-radius:14px;padding:18px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
   .bignum .lbl{font-size:11px;color:#7a736a;font-weight:700;margin-bottom:8px;letter-spacing:.2px}
   .bignum .val{font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
@@ -163,11 +163,11 @@
     <nav class="topbar" id="topbar"></nav>
     <div class="countdown" id="liveCountdown" data-base="../"></div>
   </div>
-  <a class="back-link" href="../">← 도구 모음으로</a>
+  <a class="back-link" id="backLink" href="../">← 도구 모음으로</a>
 
   <header>
-    <h1>쿠팡 <b>마진구조</b> 시뮬레이터</h1>
-    <p>감이 아닌 숫자로 판단하는 쿠팡 셀러 시뮬레이터.<br>
+    <h1 id="pageTitle">쿠팡 <b>마진구조</b> 시뮬레이터</h1>
+    <p id="pageLead">감이 아닌 숫자로 판단하는 쿠팡 셀러 시뮬레이터.<br>
        제품마다 마진·END ROAS·12개월 통장 잔고를 한눈에 볼 수 있어요.</p>
   </header>
 
@@ -182,6 +182,11 @@
       <div class="lbl">월 순이익 (풀가동 시)</div>
       <div class="val" id="profit">-</div>
       <div class="sub" id="profit-sub">&nbsp;</div>
+    </div>
+    <div class="bignum">
+      <div class="lbl">월 300만원 필요 SKU</div>
+      <div class="val gold" id="goal-skus">-</div>
+      <div class="sub" id="goal-sub">&nbsp;</div>
     </div>
     <div class="bignum">
       <div class="lbl">통장 플러스 변곡점</div>
@@ -259,6 +264,27 @@
 const $ = id => document.getElementById(id);
 const fmt = v => Math.round(v).toLocaleString();
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const GOAL_MONTHLY_PROFIT = 3000000;
+
+function setupLiveContext(){
+  const params = new URLSearchParams(window.location.search);
+  const isLiveMode = params.get('live') === '1' || params.get('open') === '1';
+  if (!isLiveMode) return;
+
+  document.title = '월 300만원 역산 시뮬레이터';
+  const backLink = $('backLink');
+  const title = $('pageTitle');
+  const lead = $('pageLead');
+
+  if (backLink) {
+    backLink.href = '../live-kit/?live=1';
+    backLink.textContent = '← 참여 자료실로';
+  }
+  if (title) title.innerHTML = '월 300만원 <b>역산</b> 시뮬레이터';
+  if (lead) {
+    lead.innerHTML = '마진율, 상품 수, 월 판매량을 넣고 월 300만원까지 필요한 숫자를 확인해보세요.<br>감이 아니라 계산으로 내 목표가 가능한 구조인지 먼저 보는 메뉴입니다.';
+  }
+}
 
 // 기본 제품
 const DEFAULT_PRODUCT = {
@@ -516,6 +542,20 @@ function render() {
   const avgMargin = r.peakRevenue > 0 ? (r.peakProfit / r.peakRevenue) * 100 : 0;
   $('profit-sub').textContent = '평균 마진율 ' + avgMargin.toFixed(1) + '%';
 
+  const perSkuProfit = r.totalSkus > 0 ? r.peakProfit / r.totalSkus : 0;
+  if (perSkuProfit <= 0) {
+    $('goal-skus').textContent = '계산 불가';
+    $('goal-skus').className = 'val neg';
+    $('goal-sub').textContent = '먼저 마진을 플러스로 만드세요';
+  } else {
+    const neededSkus = Math.ceil(GOAL_MONTHLY_PROFIT / perSkuProfit);
+    $('goal-skus').textContent = neededSkus + '개';
+    $('goal-skus').className = 'val ' + (neededSkus <= r.totalSkus ? 'pos' : 'gold');
+    $('goal-sub').textContent = neededSkus <= r.totalSkus
+      ? '현재 입력값으로 목표권'
+      : '현재 SKU당 +' + fmt(perSkuProfit) + '원 기준';
+  }
+
   if (r.bep === null) {
     $('bep').textContent = r.totalSkus === 0 ? '—' : '12개월+';
     $('bep').className = 'val ' + (r.totalSkus === 0 ? 'gold' : 'neg');
@@ -618,6 +658,7 @@ function render() {
 }
 
 // 초기화
+setupLiveContext();
 renderProducts();
 render();
 
