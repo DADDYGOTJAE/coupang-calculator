@@ -281,7 +281,14 @@
           ]
         }
       ],
-      note: '광고는 정답 버튼이 아닙니다. 내 상품의 약점이 노출인지, 클릭인지, 전환인지 알려주는 진단 도구에 가깝습니다.'
+      note: '광고는 정답 버튼이 아닙니다. 내 상품의 약점이 노출인지, 클릭인지, 전환인지 알려주는 진단 도구에 가깝습니다.',
+      relatedTool: {
+        label: '함께 확인할 도구',
+        title: '쿠팡 광고 손익분기 시뮬레이터',
+        desc: '쿠팡에 표시되는 광고 효율이 아니라, 내 상품 기준으로 광고를 돌려도 되는지 확인하는 계산기입니다. 손익분기 ROAS, 적정 광고비, 실제 수익 여부를 숫자로 확인해보세요.',
+        cta: '광고 손익분기 계산하기',
+        href: '../../ad-roas/'
+      }
     }
   };
 
@@ -351,6 +358,18 @@
     return done;
   }
 
+  function sectionStats(sectionIndex){
+    const section = kit.sections[sectionIndex];
+    const total = section ? section.items.length : 0;
+    let done = 0;
+    if (section) {
+      section.items.forEach((_, itemIndex) => {
+        if (checked[itemKey(sectionIndex, itemIndex)]) done += 1;
+      });
+    }
+    return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
+  }
+
   function save(){
     try { localStorage.setItem(storageKey, JSON.stringify(checked)); } catch(e) {}
   }
@@ -390,10 +409,25 @@
         <div class="kit-progress-track"><div class="kit-progress-fill" id="kitProgressFill" style="width:${pct}%"></div></div>
       </div>
 
+      <nav class="kit-stage-tabs" id="kitStageTabs" aria-label="체크리스트 단계">
+        ${kit.sections.map((section, sectionIndex) => {
+          const stats = sectionStats(sectionIndex);
+          return `
+            <a class="kit-stage-tab${stats.total && stats.done === stats.total ? ' all-done' : ''}" href="#kitStage${sectionIndex + 1}" data-stage-index="${sectionIndex}">
+              <span>STEP ${String(sectionIndex + 1).padStart(2, '0')}</span>
+              <b>${esc(section.title)}</b>
+              <em>${stats.done} / ${stats.total}</em>
+              <i><u style="width:${stats.pct}%"></u></i>
+            </a>
+          `;
+        }).join('')}
+      </nav>
+
       ${kit.sections.map((section, sectionIndex) => `
-        <section class="kit-section">
+        <section class="kit-section" id="kitStage${sectionIndex + 1}">
           <div class="kit-section-head">
             <div>
+              <span class="kit-step-label">STEP ${String(sectionIndex + 1).padStart(2, '0')}</span>
               <h2>${esc(section.title)}</h2>
               <p>${esc(section.desc)}</p>
             </div>
@@ -421,6 +455,15 @@
       `).join('')}
 
       <div class="kit-note"><b>라이브 활용법:</b> ${esc(kit.note)} 체크하면서 막히는 부분은 그대로 적어두셨다가 무료 라이브 Q&A에서 질문해주세요.</div>
+
+      ${kit.relatedTool ? `
+        <section class="kit-tool-card">
+          <span>${esc(kit.relatedTool.label)}</span>
+          <h2>${esc(kit.relatedTool.title)}</h2>
+          <p>${esc(kit.relatedTool.desc)}</p>
+          <a class="btn primary" href="${esc(kit.relatedTool.href)}">${esc(kit.relatedTool.cta)}</a>
+        </section>
+      ` : ''}
 
       <button class="btn ghost kit-reset" type="button" id="kitReset">체크 초기화</button>
 
@@ -456,6 +499,15 @@
     const pct = total ? Math.round(done / total * 100) : 0;
     document.getElementById('kitProgressText').textContent = `${done} / ${total} 완료 · ${pct}%`;
     document.getElementById('kitProgressFill').style.width = pct + '%';
+    root.querySelectorAll('.kit-stage-tab').forEach(tab => {
+      const sectionIndex = Number(tab.dataset.stageIndex);
+      const stats = sectionStats(sectionIndex);
+      tab.classList.toggle('all-done', !!stats.total && stats.done === stats.total);
+      const count = tab.querySelector('em');
+      const fill = tab.querySelector('u');
+      if (count) count.textContent = `${stats.done} / ${stats.total}`;
+      if (fill) fill.style.width = stats.pct + '%';
+    });
   }
 
   render();

@@ -198,7 +198,19 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
 .kit-progress-top span{font-size:12px;font-weight:900;color:var(--gold)}
 .kit-progress-track{height:9px;background:#e2d9c9;border-radius:999px;overflow:hidden}
 .kit-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#e6a13f);border-radius:999px;transition:width .18s ease}
+.kit-stage-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0 20px}
+.kit-stage-tab{display:grid;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 10px;color:inherit;text-decoration:none;box-shadow:var(--shadow);transition:border-color .12s ease,background .12s ease,transform .12s ease}
+.kit-stage-tab:hover{border-color:#ead2aa;background:#fffdf8;transform:translateY(-1px)}
+.kit-stage-tab span{font-size:10px;font-weight:900;color:var(--gold);letter-spacing:.4px}
+.kit-stage-tab b{font-size:12px;font-weight:900;color:var(--ink);line-height:1.35}
+.kit-stage-tab em{font-style:normal;font-size:11px;font-weight:900;color:var(--muted)}
+.kit-stage-tab i{display:block;height:4px;background:#ece7dc;border-radius:999px;overflow:hidden}
+.kit-stage-tab u{display:block;height:100%;background:var(--gold);border-radius:999px;text-decoration:none;transition:width .18s ease}
+.kit-stage-tab.all-done{background:#f3fbf6;border-color:#bfe7cf}
+.kit-stage-tab.all-done span,.kit-stage-tab.all-done em{color:#137657}
+.kit-stage-tab.all-done u{background:#1D9E75}
 .kit-section{margin-top:18px}
+.kit-step-label{display:inline-flex;margin-bottom:5px;font-size:10px;font-weight:900;letter-spacing:.5px;color:var(--gold)}
 .kit-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
 .kit-section h2{font-size:18px;font-weight:900;letter-spacing:-.3px}
 .kit-section p{font-size:13px;color:var(--muted);line-height:1.6}
@@ -217,6 +229,11 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
 .kit-reset{margin-top:16px}
 .kit-note{margin-top:18px;background:#fff9ef;border:1px solid #ead2aa;border-radius:14px;padding:18px;color:#6f5a3a;font-size:13px;line-height:1.7}
 .kit-note b{color:var(--ink)}
+.kit-tool-card{margin-top:18px;background:#fff;border:1px solid #ead2aa;border-radius:16px;padding:22px;box-shadow:var(--shadow);display:grid;gap:10px}
+.kit-tool-card > span{display:inline-flex;width:max-content;background:var(--gold-soft);border:1px solid #ebd2aa;color:#7a4f0a;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:900}
+.kit-tool-card h2{font-size:19px;font-weight:900;letter-spacing:-.3px;color:var(--ink)}
+.kit-tool-card p{font-size:13px;color:var(--muted);line-height:1.65;max-width:720px}
+.kit-tool-card .btn{width:max-content;margin-top:2px}
 .checklist{display:grid;gap:7px;list-style:none}
 .checklist li{font-size:13px;color:#4b4540;line-height:1.55;padding-left:22px;position:relative}
 .checklist li::before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:900}
@@ -254,6 +271,7 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
   .section-head p{margin-top:4px}
   .grid,.grid.three,.split{grid-template-columns:1fr}
   .kit-summary{grid-template-columns:1fr}
+  .kit-stage-tabs{grid-template-columns:repeat(2,1fr)}
   .tool-actions{display:grid}
   .tool-actions .btn{width:100%}
   .kit-section-head{display:block}
@@ -263,4 +281,5 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
   .count-pill{min-height:38px;justify-content:center}
   .chat-band .btn{width:100%}
   .cta-band .btn{width:100%}
+  .kit-tool-card .btn{width:100%}
 }

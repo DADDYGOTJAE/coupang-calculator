@@ -36,7 +36,7 @@
       const lock = card.querySelector('.kit-lock');
       const meta = card.querySelector('.meta');
       if (lock) lock.textContent = '지금 공개';
-      if (meta) meta.textContent = '열어보기';
+      if (meta) meta.textContent = card.dataset.openMeta || '열어보기';
     });
     return;
   }
