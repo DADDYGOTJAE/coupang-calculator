@@ -319,7 +319,7 @@
       <section class="chat-band">
         <h2>진행하다가 막히는 순간, 혼자 끙끙대지 마세요.</h2>
         <p>상품을 찾다가 답답하거나, 이게 맞는 방향인지 헷갈릴 때가 가장 많이 멈추는 구간입니다. 대디갓재와 직접 소통할 수 있는 단톡방에서 질문 남기고 방향을 바로 잡아보세요.</p>
-        <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">대디갓재 소통방 입장하기</a>
+        <a class="btn primary disabled" aria-disabled="true">라이브 중 공개</a>
       </section>
     `;
     return;

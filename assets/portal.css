@@ -127,6 +127,8 @@ a.card .meta::after{content:"→";font-size:14px;letter-spacing:0}
 .btn.primary{background:var(--gold);color:#fff}
 .btn.dark{background:var(--ink);color:#fff}
 .btn.ghost{background:var(--paper);color:var(--muted);border:1px solid var(--line-strong)}
+.btn.disabled,.btn[aria-disabled="true"]{background:#8b8174;color:#fff;cursor:not-allowed;opacity:.72;pointer-events:none}
+.btn.disabled:hover,.btn[aria-disabled="true"]:hover{transform:none}
 .notice,.footer-note{
   background:var(--paper);
   border:1px solid var(--line);

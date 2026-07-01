@@ -8,9 +8,19 @@
   const notice = document.getElementById('liveKitNotice');
   const heroText = document.getElementById('liveKitHeroText');
   const backLink = document.querySelector('.back-link');
+  const chatLink = document.querySelector('[data-live-chat]');
+  const chatUrl = 'https://open.kakao.com/o/pAnuH13h';
 
   if (isOpen) {
     if (backLink) backLink.setAttribute('href', '../?live=1');
+    if (chatLink) {
+      chatLink.setAttribute('href', chatUrl);
+      chatLink.setAttribute('target', '_blank');
+      chatLink.setAttribute('rel', 'noopener');
+      chatLink.setAttribute('aria-disabled', 'false');
+      chatLink.classList.remove('disabled');
+      chatLink.textContent = '대디갓재 소통방 입장하기';
+    }
     if (heroText) {
       heroText.textContent = '소싱부터 광고까지 각 단계별로 보고 따라할 수 있는 자료입니다. 라이브 흐름에 맞춰 순서대로 열어보시면 됩니다.';
     }
@@ -29,6 +39,15 @@
       if (meta) meta.textContent = '열어보기';
     });
     return;
+  }
+
+  if (chatLink) {
+    chatLink.removeAttribute('href');
+    chatLink.removeAttribute('target');
+    chatLink.removeAttribute('rel');
+    chatLink.setAttribute('aria-disabled', 'true');
+    chatLink.classList.add('disabled');
+    chatLink.textContent = '라이브 중 공개';
   }
 
   list.querySelectorAll('a.kit-item').forEach(card => {
