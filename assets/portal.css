@@ -20,6 +20,8 @@ body{
   line-height:1.5;
   padding:28px 16px 56px;
   min-height:100vh;
+  word-break:keep-all;
+  overflow-wrap:break-word;
 }
 a{color:inherit}
 .wrap{max-width:980px;margin:0 auto}

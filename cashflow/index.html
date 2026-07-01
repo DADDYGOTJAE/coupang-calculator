@@ -6,7 +6,7 @@
 <title>쿠팡 마진구조 시뮬레이터</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh;word-break:keep-all;overflow-wrap:break-word}
   .wrap{max-width:880px;margin:0 auto}
 
   /* 상단 채널 링크 바 */
@@ -70,7 +70,8 @@
   .sku-total{font-size:12px;color:#7a736a;background:#f5f1e8;padding:5px 12px;border-radius:999px;white-space:nowrap;font-weight:600}
   .sku-total b{color:#BA7517;font-size:14px;font-weight:800}
 
-  .product-card{border:1px solid #ece7dc;border-radius:12px;padding:16px;margin-bottom:12px;background:#fbfaf6}
+  #products-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px}
+  .product-card{border:1px solid #ece7dc;border-radius:12px;padding:16px;margin-bottom:0;background:#fbfaf6}
   .product-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed #ece7dc}
   .product-num{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:#2c2926}
   .product-num::before{content:"";display:inline-block;width:6px;height:18px;background:#BA7517;border-radius:3px}
@@ -97,6 +98,8 @@
   /* 차트 */
   .chart-card{padding:18px}
   .chart-card canvas{max-height:300px}
+  .chart-note{margin-top:12px;background:#fff8e7;border-left:4px solid #BA7517;border-radius:8px;padding:12px 14px;font-size:12px;color:#7a4f0a;line-height:1.65}
+  .chart-note b{color:#2c2926}
 
   /* 결론 */
   .conclusion{background:#BA7517;color:#fff;border-radius:14px;padding:22px;text-align:center;font-size:17px;font-weight:600;letter-spacing:-.3px;line-height:1.5;margin-bottom:18px}
@@ -151,6 +154,7 @@
     .is-scrolled .count-unit b{font-size:16px}
     .is-scrolled .count-action{min-height:36px;padding:9px 10px}
     .product-fields{grid-template-columns:1fr;gap:10px}
+    #products-list{grid-template-columns:1fr}
     .product-results{grid-template-columns:1fr;gap:6px}
     .result-item{flex-direction:row;justify-content:space-between;align-items:center;padding:6px 10px;background:#fff;border-radius:6px}
     .tax-item{flex-direction:column;align-items:flex-start;gap:4px}
@@ -170,6 +174,26 @@
     <p id="pageLead">감이 아닌 숫자로 판단하는 쿠팡 셀러 시뮬레이터.<br>
        제품마다 마진·END ROAS·12개월 통장 잔고를 한눈에 볼 수 있어요.</p>
   </header>
+
+  <!-- 제품 정보 -->
+  <div class="card">
+    <div class="schedule-header">
+      <h2>제품 정보</h2>
+      <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
+    </div>
+    <div class="info-tip">
+      <span class="lead">💡 입력 가이드 (쿠팡 데이터 + 매입영수증 기준)</span>
+      • <b>판매가, 원가</b>는 <b>부가세 포함</b> 금액 (쿠팡 표시가 / 실제 매입 지불액)<br>
+      • <b>판매수수료·입출고배송비·광고비</b>는 <b>부가세 별도</b> (쿠팡이 셀러에게 알려주는 데이터 그대로)<br>
+      • 부가세 자동 계산: <code>매출/11 − 원가/11 − (수수료+입출고+광고)/10</code> (VAT 10% 기준)<br>
+      • 표시되는 마진액은 <b>광고비·매입세액 공제 후 실효 마진</b>입니다 (셀러가 실제 가져가는 돈)<br>
+      • 제품마다 사양이 다르면 각 카드에 따로 입력 — 출시 월이 다르면 그 시점부터 매출 합산
+    </div>
+
+    <div id="products-list"></div>
+
+    <button class="add-btn" id="add-btn">+ 제품 추가</button>
+  </div>
 
   <!-- 핵심 요약 -->
   <div class="bignums">
@@ -195,30 +219,13 @@
     </div>
   </div>
 
-  <!-- 제품 정보 -->
-  <div class="card">
-    <div class="schedule-header">
-      <h2>제품 정보</h2>
-      <span class="sku-total">12월 기준 총 <b id="sku-total">1</b>개 SKU</span>
-    </div>
-    <div class="info-tip">
-      <span class="lead">💡 입력 가이드 (쿠팡 데이터 + 매입영수증 기준)</span>
-      • <b>판매가, 원가</b>는 <b>부가세 포함</b> 금액 (쿠팡 표시가 / 실제 매입 지불액)<br>
-      • <b>판매수수료·입출고배송비·광고비</b>는 <b>부가세 별도</b> (쿠팡이 셀러에게 알려주는 데이터 그대로)<br>
-      • 부가세 자동 계산: <code>매출/11 − 원가/11 − (수수료+입출고+광고)/10</code> (VAT 10% 기준)<br>
-      • 표시되는 마진액은 <b>광고비·매입세액 공제 후 실효 마진</b>입니다 (셀러가 실제 가져가는 돈)<br>
-      • 제품마다 사양이 다르면 각 카드에 따로 입력 — 출시 월이 다르면 그 시점부터 매출 합산
-    </div>
-
-    <div id="products-list"></div>
-
-    <button class="add-btn" id="add-btn">+ 제품 추가</button>
-  </div>
-
   <!-- 차트 -->
   <div class="card chart-card">
     <h2>12개월 통장 잔고 추이 <small style="font-weight:400;color:#a09a8f">· 정산 2개월 뒤 입금 기준</small></h2>
     <canvas id="chart"></canvas>
+    <div class="chart-note">
+      <b>주의:</b> 이 그래프는 입력한 판매량이 매월 그대로 유지되고, 품절·반품·광고 효율 변동·입고 지연이 없다는 전제의 기준 시뮬레이션입니다. 실제 운영에서는 여러 변수가 생기므로, 정확한 미래 예측보다 자금 흐름의 방향을 보는 용도로 활용해주세요.
+    </div>
   </div>
 
   <!-- 결론 -->
