@@ -22,7 +22,7 @@
       chatLink.textContent = '대디갓재 소통방 입장하기';
     }
     if (heroText) {
-      heroText.textContent = '소싱부터 광고까지 각 단계별로 보고 따라할 수 있는 자료입니다. 라이브 흐름에 맞춰 순서대로 열어보시면 됩니다.';
+      heroText.textContent = '소싱부터 차별화, 기획, 제작, 등록, 광고까지 각 단계별로 보고 따라할 수 있는 자료입니다. 라이브 흐름에 맞춰 순서대로 열어보시면 됩니다.';
     }
     if (notice) {
       notice.innerHTML = '<b>라이브 참여자 공개:</b> 지금은 자료를 열람할 수 있습니다. 체크하면서 막히는 부분은 Q&A 때 바로 질문해주세요.';
