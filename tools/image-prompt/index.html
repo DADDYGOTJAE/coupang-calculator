@@ -7,7 +7,7 @@
 <meta name="description" content="쿠팡 규정에 맞는 이미지를 만들 수 있는 프롬프트 안내입니다.">
 <link rel="stylesheet" href="../../assets/portal.css">
 </head>
-<body>
+<body class="tool-detail">
 <div class="wrap">
   <div class="sticky-shell">
     <nav class="topbar" id="topbar" data-base="../../"></nav>
@@ -22,17 +22,60 @@
   </header>
 
   <section class="kit-summary">
-    <div class="kit-summary-item"><b>용도</b><span>상품 이미지 생성 프롬프트 정리</span></div>
-    <div class="kit-summary-item"><b>추천 상황</b><span>AI 이미지 제작 전 구도와 조건을 잡을 때</span></div>
-    <div class="kit-summary-item"><b>상태</b><span>링크 준비 중</span></div>
+    <div class="kit-summary-item"><b>용도</b><span>쿠팡 상품 이미지 생성</span></div>
+    <div class="kit-summary-item"><b>추천 상황</b><span>쿠팡 규정에 맞는 이미지를 만들어야 할 때</span></div>
+    <div class="kit-summary-item"><b>핵심</b><span>나만의 이미지로 등록해야 위너 매칭을 피할 수 있습니다.</span></div>
   </section>
 
   <div class="notice">
-    <b>사용 포인트:</b> AI 이미지는 예쁘게 만드는 것보다 상품 형태와 쿠팡 규정에 맞게 만드는 것이 먼저입니다. 링크가 준비되면 이 페이지에서 바로 열 수 있게 연결하겠습니다.
+    <b>사용 포인트:</b> 아래 프롬프트에서 <b>[product]</b> 부분만 내 상품명으로 바꾸고, 상품 사진과 함께 이미지 생성 AI에 입력해보세요.
+  </div>
+
+  <div class="prompt-box">
+    <textarea id="imagePrompt" readonly>Task: From the single photo I provide of [product], create two thumbnail-ready images that meet every rule below.
+
+COMMON RULES (Existing + Coupang Official)
+
+Size: at least 1000 x 1000 px, no larger than 10 MB.
+- You may work on a 2048 x 2048 px canvas at 300 dpi.
+
+File formats accepted: jpeg, avif, webp, png, gif (non-animated).
+- Submit the final files as high-quality JPEG (sRGB).
+
+Front-facing, high-resolution product photo: preserve 100% of all visible marks, logos, textures, and fine details.
+
+Background: solid pure white #FFFFFF only; no transparency.
+
+Composition:
+- The product should occupy about 85% of the image's width or height.
+- Center the product in the frame, except for Version B below.
+
+No distortion: do not stretch, compress, or alter the product's proportions. Rotation must keep the original aspect ratio intact.
+
+Lighting: bright, soft, even. Add a natural contact shadow directly beneath the product.
+
+No overlays: absolutely no text, graphics, watermarks, or borders.
+
+Actual shipping condition only: show the product exactly as the customer receives it. No props or freebies.
+
+Deliverables: only the two final image files, with no additional explanations or metadata.
+
+VERSION A - Primary Angle
+
+- Rotate the product about 15 degrees clockwise and tilt about 5 degrees downward for a dynamic front-top view.
+- Keep any printed text or logo upright and fully legible.
+- Center the product and let it fill about 85% of the frame.
+
+VERSION B - Alternate Composition
+
+- From Version A, add about 5 degrees more clockwise rotation, about 20 degrees total, or tilt about 7 degrees downward.
+- Shift the product slightly toward the upper-left quadrant and scale it to about 80% of the frame, keeping clean, even margins.
+- Purpose: provide a subtle variation for A/B testing to improve click-through rate.</textarea>
+    <button class="btn primary" type="button" id="copyPrompt">프롬프트 복사하기</button>
   </div>
 
   <div class="tool-youtube">
-    <b>관련 유튜브</b>
+    <b>관련 유튜브 영상</b>
     추후 이미지 생성 실습 영상이 올라오면 이곳에 연결할 예정입니다.
   </div>
 </div>
@@ -40,5 +83,20 @@
 <script src="../../assets/topbar.js"></script>
 <script src="../../assets/countdown.js"></script>
 <script src="../../assets/sticky-header.js"></script>
+<script>
+document.getElementById('copyPrompt').addEventListener('click', async () => {
+  const prompt = document.getElementById('imagePrompt');
+  prompt.select();
+  try {
+    await navigator.clipboard.writeText(prompt.value);
+  } catch(e) {
+    document.execCommand('copy');
+  }
+  document.getElementById('copyPrompt').textContent = '복사 완료';
+  setTimeout(() => {
+    document.getElementById('copyPrompt').textContent = '프롬프트 복사하기';
+  }, 1600);
+});
+</script>
 </body>
 </html>

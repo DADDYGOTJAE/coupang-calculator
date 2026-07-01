@@ -181,6 +181,15 @@ a.kit-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border
 .tool-actions .btn{min-width:160px}
 .tool-youtube{margin-top:18px;background:#fff;border:1px dashed var(--line-strong);border-radius:14px;padding:18px;color:var(--muted);font-size:13px;line-height:1.65}
 .tool-youtube b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.tool-detail .kit-summary-item{padding:22px 24px}
+.tool-detail .kit-summary-item b{font-size:15px;margin-bottom:10px}
+.tool-detail .kit-summary-item span{font-size:18px;line-height:1.5}
+.tool-detail .notice{font-size:17px;line-height:1.75;padding:24px 26px}
+.tool-detail .tool-youtube{padding:28px 30px;font-size:17px;line-height:1.7}
+.tool-detail .tool-youtube b{font-size:21px;margin-bottom:10px}
+.prompt-box{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.prompt-box textarea{width:100%;min-height:360px;border:1px solid var(--line-strong);border-radius:12px;background:#fbfaf6;padding:16px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;line-height:1.6;color:var(--ink);resize:vertical}
+.prompt-box .btn{margin-top:12px}
 .kit-progress{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:18px 0;box-shadow:var(--shadow)}
 .kit-progress-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}
 .kit-progress-top b{font-size:14px;font-weight:900;color:var(--ink)}
