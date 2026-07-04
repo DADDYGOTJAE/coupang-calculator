@@ -6,7 +6,7 @@
 <title>쿠팡 광고 손익분기 시뮬레이터</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f1e8;color:#2c2926;line-height:1.5;padding:24px 16px;min-height:100vh;word-break:keep-all;overflow-wrap:break-word}
   .wrap{max-width:880px;margin:0 auto}
 
   /* 상단 채널 링크 바 */
@@ -578,6 +578,19 @@ function render(){
 }
 
 // 초기화
+function setupLiveContext(){
+  const params = new URLSearchParams(window.location.search);
+  const isLiveMode = params.get('live') === '1' || params.get('open') === '1';
+  if (!isLiveMode) return;
+
+  const backLink = document.querySelector('.back-link');
+  if (backLink) {
+    backLink.href = '../live-kit/ad-optimization/?live=1';
+    backLink.textContent = '← 광고 체크리스트로';
+  }
+}
+
+setupLiveContext();
 syncAdInputs('pct');
 render();
 

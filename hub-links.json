@@ -1,0 +1,44 @@
+{
+  "tracking": {
+    "enabled": false,
+    "endpoint": "",
+    "defaultSource": "hub"
+  },
+  "links": {
+    "apply": {
+      "label": "무료 라이브 신청하기",
+      "url": "https://docs.google.com/forms/d/1n320JQGFomXomqVL9BYqeVFzH8ryH7X4VVpxoN3yxU8/viewform",
+      "external": true
+    },
+    "pre_materials": {
+      "label": "사전 자료실 보기",
+      "url": "https://daddygotjae.github.io/coupang-calculator/free-live/",
+      "external": false
+    },
+    "waiting_room": {
+      "label": "무료 라이브 대기방 입장",
+      "url": "https://m.site.naver.com/281tU",
+      "external": true
+    },
+    "live_kit_preview": {
+      "label": "참여자 키트 미리보기",
+      "url": "https://daddygotjae.github.io/coupang-calculator/live-kit/",
+      "external": false
+    },
+    "youtube": {
+      "label": "대디갓재 유튜브",
+      "url": "https://www.youtube.com/@대디갓재",
+      "external": true
+    },
+    "course": {
+      "label": "쿠팡병법 정규강의 보기",
+      "url": "https://gotjae.liveklass.com/classes/308088",
+      "external": true
+    },
+    "cash_inquiry": {
+      "label": "현금 결제 / 1:1 문의",
+      "url": "https://open.kakao.com/o/sYwul23h",
+      "external": true
+    }
+  }
+}
