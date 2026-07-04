@@ -36,7 +36,7 @@
       "external": true
     },
     "cash_inquiry": {
-      "label": "현금 결제 / 1:1 문의",
+      "label": "1:1 문의",
       "url": "https://open.kakao.com/o/sYwul23h",
       "external": true
     }

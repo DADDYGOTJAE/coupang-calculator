@@ -174,6 +174,38 @@
     <div class="live-preview" id="live-preview"></div>
   </div>
 
+  <div class="card">
+    <h2>4단계 · 허브 페이지 버튼 링크</h2>
+    <p class="desc">유튜브 고정댓글에 쓰는 허브 페이지의 주요 버튼 링크입니다. 대기방 링크는 위 카운트다운 링크와 같은 값으로 맞춰두는 것을 추천합니다.</p>
+
+    <div class="config-grid">
+      <div class="config-field full">
+        <label for="hub-apply">무료 라이브 신청 링크</label>
+        <input id="hub-apply" type="url" placeholder="https://docs.google.com/forms/...">
+      </div>
+      <div class="config-field full">
+        <label for="hub-pre">사전 자료실 링크</label>
+        <input id="hub-pre" type="url" placeholder="https://daddygotjae.github.io/coupang-calculator/free-live/">
+      </div>
+      <div class="config-field full">
+        <label for="hub-waiting">무료 라이브 대기방 링크</label>
+        <input id="hub-waiting" type="url" placeholder="https://m.site.naver.com/281tU">
+      </div>
+      <div class="config-field full">
+        <label for="hub-course">정규강의 링크</label>
+        <input id="hub-course" type="url" placeholder="https://gotjae.liveklass.com/classes/308088">
+      </div>
+      <div class="config-field full">
+        <label for="hub-inquiry">1:1 문의 링크</label>
+        <input id="hub-inquiry" type="url" placeholder="https://open.kakao.com/o/...">
+      </div>
+      <div class="config-field full">
+        <label for="hub-tracking">클릭 추적 Apps Script URL</label>
+        <input id="hub-tracking" type="url" placeholder="비워두면 클릭 추적 비활성화">
+      </div>
+    </div>
+  </div>
+
   <button class="save-btn" id="save-btn" disabled>💾 저장하고 사이트에 반영</button>
   <div class="status-msg hidden" id="status"></div>
 </div>
@@ -183,6 +215,7 @@ const REPO_OWNER = 'DADDYGOTJAE';
 const REPO_NAME = 'coupang-calculator';
 const LINKS_PATH = 'links.json';
 const CONFIG_PATH = 'site-config.json';
+const HUB_LINKS_PATH = 'hub-links.json';
 const PAT_KEY = 'coupang_admin_pat';
 
 const $ = id => document.getElementById(id);
@@ -191,6 +224,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 let links = [];      // [{type, icon, label, url}]
 let linkSha = null;
 let configSha = null;
+let hubSha = null;
 let siteConfig = {
   live: {
     enabled: true,
@@ -199,6 +233,18 @@ let siteConfig = {
     afterText: '무료 라이브가 진행 중이거나 종료되었습니다.',
     waitingRoomLabel: '무료 라이브 대기방 입장',
     waitingRoomUrl: 'https://m.site.naver.com/281tU'
+  }
+};
+let hubLinks = {
+  tracking: { enabled: false, endpoint: '', defaultSource: 'hub' },
+  links: {
+    apply: { label: '무료 라이브 신청하기', url: '', external: true },
+    pre_materials: { label: '사전 자료실 보기', url: 'https://daddygotjae.github.io/coupang-calculator/free-live/', external: false },
+    waiting_room: { label: '무료 라이브 대기방 입장', url: 'https://m.site.naver.com/281tU', external: true },
+    live_kit_preview: { label: '참여자 키트 미리보기', url: 'https://daddygotjae.github.io/coupang-calculator/live-kit/', external: false },
+    youtube: { label: '대디갓재 유튜브', url: 'https://www.youtube.com/@대디갓재', external: true },
+    course: { label: '쿠팡병법 정규강의 보기', url: 'https://gotjae.liveklass.com/classes/308088', external: true },
+    cash_inquiry: { label: '1:1 문의', url: 'https://open.kakao.com/o/sYwul23h', external: true }
   }
 };
 
@@ -372,6 +418,60 @@ function renderLivePreview(){
   $(id).addEventListener('change', renderLivePreview);
 });
 
+function ensureHubShape(){
+  hubLinks = hubLinks || {};
+  hubLinks.tracking = hubLinks.tracking || { enabled: false, endpoint: '', defaultSource: 'hub' };
+  hubLinks.links = hubLinks.links || {};
+  const defaults = {
+    apply: { label: '무료 라이브 신청하기', url: '', external: true },
+    pre_materials: { label: '사전 자료실 보기', url: 'https://daddygotjae.github.io/coupang-calculator/free-live/', external: false },
+    waiting_room: { label: '무료 라이브 대기방 입장', url: 'https://m.site.naver.com/281tU', external: true },
+    live_kit_preview: { label: '참여자 키트 미리보기', url: 'https://daddygotjae.github.io/coupang-calculator/live-kit/', external: false },
+    youtube: { label: '대디갓재 유튜브', url: 'https://www.youtube.com/@대디갓재', external: true },
+    course: { label: '쿠팡병법 정규강의 보기', url: 'https://gotjae.liveklass.com/classes/308088', external: true },
+    cash_inquiry: { label: '1:1 문의', url: 'https://open.kakao.com/o/sYwul23h', external: true }
+  };
+  Object.keys(defaults).forEach(key => {
+    hubLinks.links[key] = { ...defaults[key], ...(hubLinks.links[key] || {}) };
+  });
+}
+
+function renderHubLinksForm(){
+  ensureHubShape();
+  $('hub-apply').value = hubLinks.links.apply.url || '';
+  $('hub-pre').value = hubLinks.links.pre_materials.url || '';
+  $('hub-waiting').value = hubLinks.links.waiting_room.url || '';
+  $('hub-course').value = hubLinks.links.course.url || '';
+  $('hub-inquiry').value = hubLinks.links.cash_inquiry.url || '';
+  $('hub-tracking').value = hubLinks.tracking.endpoint || '';
+}
+
+function readHubLinksForm(){
+  ensureHubShape();
+  hubLinks.links.apply.url = $('hub-apply').value.trim();
+  hubLinks.links.pre_materials.url = $('hub-pre').value.trim() || 'https://daddygotjae.github.io/coupang-calculator/free-live/';
+  hubLinks.links.waiting_room.url = $('hub-waiting').value.trim() || $('live-room-url').value.trim() || 'https://m.site.naver.com/281tU';
+  hubLinks.links.course.url = $('hub-course').value.trim() || 'https://gotjae.liveklass.com/classes/308088';
+  hubLinks.links.cash_inquiry.label = '1:1 문의';
+  hubLinks.links.cash_inquiry.url = $('hub-inquiry').value.trim() || 'https://open.kakao.com/o/sYwul23h';
+  hubLinks.tracking.endpoint = $('hub-tracking').value.trim();
+  hubLinks.tracking.enabled = Boolean(hubLinks.tracking.endpoint);
+  hubLinks.tracking.defaultSource = hubLinks.tracking.defaultSource || 'hub';
+  return hubLinks;
+}
+
+function syncWaitingRoomToHub(){
+  $('hub-waiting').value = $('live-room-url').value.trim();
+  readHubLinksForm();
+}
+
+$('live-room-url').addEventListener('input', syncWaitingRoomToHub);
+
+['hub-apply','hub-pre','hub-waiting','hub-course','hub-inquiry','hub-tracking'].forEach(id => {
+  $(id).addEventListener('input', readHubLinksForm);
+  $(id).addEventListener('change', readHubLinksForm);
+});
+
 $('add-link').addEventListener('click', () => {
   links.push({ type: '', icon: '', label: '', url: '' });
   renderLinks();
@@ -381,9 +481,10 @@ $('add-link').addEventListener('click', () => {
 // ===== 설정 로드 =====
 async function loadLocalSettings(){
   try {
-    const [linksRes, configRes] = await Promise.all([
+    const [linksRes, configRes, hubRes] = await Promise.all([
       fetch('../links.json?t=' + Date.now(), { cache: 'no-cache' }),
-      fetch('../site-config.json?t=' + Date.now(), { cache: 'no-cache' })
+      fetch('../site-config.json?t=' + Date.now(), { cache: 'no-cache' }),
+      fetch('../hub-links.json?t=' + Date.now(), { cache: 'no-cache' })
     ]);
     if (linksRes.ok) {
       const json = await linksRes.json();
@@ -394,11 +495,15 @@ async function loadLocalSettings(){
     if (configRes.ok) {
       siteConfig = await configRes.json();
     }
+    if (hubRes.ok) {
+      hubLinks = await hubRes.json();
+    }
   } catch(e) {}
   if (links.length === 0) links = [{ type: '', icon: '', label: '', url: '' }];
   renderLinks();
   renderPreview();
   renderLiveForm();
+  renderHubLinksForm();
 }
 
 // ===== GitHub API =====
@@ -420,20 +525,24 @@ async function loadRemoteSettings(){
   if (!token) return;
   showStatus('info', '현재 저장된 설정을 불러오는 중...');
   try {
-    const [linksFile, configFile] = await Promise.all([
+    const [linksFile, configFile, hubFile] = await Promise.all([
       loadRemoteFile(LINKS_PATH),
-      loadRemoteFile(CONFIG_PATH)
+      loadRemoteFile(CONFIG_PATH),
+      loadRemoteFile(HUB_LINKS_PATH)
     ]);
     linkSha = linksFile.sha;
     configSha = configFile.sha;
+    hubSha = hubFile.sha;
     links = ((linksFile.json || {}).channels || []).map(c => ({
       type: c.type || '', icon: c.icon || '', label: c.label || '', url: c.url || ''
     }));
     if (configFile.json) siteConfig = configFile.json;
+    if (hubFile.json) hubLinks = hubFile.json;
     if (links.length === 0) links = [{ type: '', icon: '', label: '', url: '' }];
     renderLinks();
     renderPreview();
     renderLiveForm();
+    renderHubLinksForm();
     hideStatus();
   } catch (e) {
     showStatus('err', '설정을 불러오지 못했습니다: ' + e.message);
@@ -478,6 +587,8 @@ async function saveSettings(){
 
   const linksJson = { channels: valid };
   const configJson = { ...siteConfig, live: readLiveForm() };
+  if (!$('hub-waiting').value.trim()) $('hub-waiting').value = configJson.live.waitingRoomUrl;
+  const hubJson = readHubLinksForm();
 
   $('save-btn').disabled = true;
   $('save-btn').textContent = '저장 중...';
@@ -486,6 +597,7 @@ async function saveSettings(){
   try {
     linkSha = await saveFile(LINKS_PATH, linksJson, linkSha, 'Update channel links via admin');
     configSha = await saveFile(CONFIG_PATH, configJson, configSha, 'Update site config via admin');
+    hubSha = await saveFile(HUB_LINKS_PATH, hubJson, hubSha, 'Update hub links via admin');
     showStatus('ok', '✅ 저장 완료! 1~2분 후 <a href="../" target="_blank">사이트</a>에 반영됩니다. 새로고침해서 확인하세요.');
   } catch (e) {
     showStatus('err', '✗ ' + e.message);
