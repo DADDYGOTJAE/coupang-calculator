@@ -192,7 +192,7 @@
         <input id="hub-waiting" type="url" placeholder="https://m.site.naver.com/281tU">
       </div>
       <div class="config-field full">
-        <label for="hub-course">정규강의 링크</label>
+        <label for="hub-course">컨설팅 신청 링크</label>
         <input id="hub-course" type="url" placeholder="https://gotjae.liveklass.com/classes/308088">
       </div>
       <div class="config-field full">
@@ -243,7 +243,7 @@ let hubLinks = {
     waiting_room: { label: '무료 라이브 대기방 입장', url: 'https://m.site.naver.com/281tU', external: true },
     live_kit_preview: { label: '참여자 키트 미리보기', url: 'https://daddygotjae.github.io/coupang-calculator/live-kit/', external: false },
     youtube: { label: '대디갓재 유튜브', url: 'https://www.youtube.com/@대디갓재', external: true },
-    course: { label: '쿠팡병법 정규강의 보기', url: 'https://gotjae.liveklass.com/classes/308088', external: true },
+    course: { label: '쿠팡병법 컨설팅 신청하기', url: 'https://gotjae.liveklass.com/classes/308088', external: true },
     cash_inquiry: { label: '1:1 문의', url: 'https://open.kakao.com/o/sYwul23h', external: true }
   }
 };
@@ -317,7 +317,7 @@ function renderLinks(){
       <select data-i="${i}" data-field="type" aria-label="버튼 유형">
         <option value="" ${!row.type ? 'selected' : ''}>기본</option>
         <option value="youtube" ${row.type === 'youtube' ? 'selected' : ''}>유튜브</option>
-        <option value="course" ${row.type === 'course' ? 'selected' : ''}>정규강의</option>
+        <option value="course" ${row.type === 'course' ? 'selected' : ''}>컨설팅</option>
       </select>
       <input class="icon-input" data-i="${i}" data-field="icon" placeholder="📺" value="${esc(row.icon || '')}" maxlength="2">
       <input class="label-input" data-i="${i}" data-field="label" placeholder="채널명" value="${esc(row.label || '')}">
@@ -428,7 +428,7 @@ function ensureHubShape(){
     waiting_room: { label: '무료 라이브 대기방 입장', url: 'https://m.site.naver.com/281tU', external: true },
     live_kit_preview: { label: '참여자 키트 미리보기', url: 'https://daddygotjae.github.io/coupang-calculator/live-kit/', external: false },
     youtube: { label: '대디갓재 유튜브', url: 'https://www.youtube.com/@대디갓재', external: true },
-    course: { label: '쿠팡병법 정규강의 보기', url: 'https://gotjae.liveklass.com/classes/308088', external: true },
+    course: { label: '쿠팡병법 컨설팅 신청하기', url: 'https://gotjae.liveklass.com/classes/308088', external: true },
     cash_inquiry: { label: '1:1 문의', url: 'https://open.kakao.com/o/sYwul23h', external: true }
   };
   Object.keys(defaults).forEach(key => {
