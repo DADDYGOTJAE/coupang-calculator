@@ -324,9 +324,9 @@
       </section>
 
       <section class="chat-band">
-        <h2>진행하다가 막히는 순간, 혼자 끙끙대지 마세요.</h2>
-        <p>상품을 찾다가 답답하거나, 이게 맞는 방향인지 헷갈릴 때가 가장 많이 멈추는 구간입니다. 대디갓재와 직접 소통할 수 있는 단톡방에서 질문 남기고 방향을 바로 잡아보세요.</p>
-        <a class="btn primary disabled" aria-disabled="true">라이브 중 공개</a>
+        <h2>이제 혼자 고민하지 마세요.</h2>
+        <p>1인 셀러가 가장 힘든 순간은 상품을 못 찾을 때가 아닙니다. 이게 맞는 건지 물어볼 곳이 없을 때입니다. 혼자 끙끙대며 시간 보내지 마시고, 대디갓재와 함께 소통하며 성장해 나가세요.</p>
+        <a class="btn primary disabled" aria-disabled="true">라이브 참여자 전용 공개</a>
       </section>
     `;
     return;
@@ -468,8 +468,8 @@
       <button class="btn ghost kit-reset" type="button" id="kitReset">체크 초기화</button>
 
       <section class="chat-band">
-        <h2>진행하다가 막히는 순간, 혼자 끙끙대지 마세요.</h2>
-        <p>자료를 보며 따라가다가 답답한 지점이 생기면 그대로 남겨주세요. 대디갓재와 직접 소통할 수 있는 단톡방에서 질문하고, 지금 어디서 막혔는지 같이 방향을 잡아보세요.</p>
+        <h2>이제 혼자 고민하지 마세요.</h2>
+        <p>1인 셀러가 가장 힘든 순간은 상품을 못 찾을 때가 아닙니다. 이게 맞는 건지 물어볼 곳이 없을 때입니다. 혼자 끙끙대며 시간 보내지 마시고, 대디갓재와 함께 소통하며 성장해 나가세요.</p>
         <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">대디갓재 소통방 입장하기</a>
       </section>
     `;

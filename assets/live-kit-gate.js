@@ -47,7 +47,7 @@
     chatLink.removeAttribute('rel');
     chatLink.setAttribute('aria-disabled', 'true');
     chatLink.classList.add('disabled');
-    chatLink.textContent = '라이브 중 공개';
+    chatLink.textContent = '라이브 참여자 전용 공개';
   }
 
   list.querySelectorAll('a.kit-item').forEach(card => {
