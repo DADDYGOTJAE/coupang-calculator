@@ -1,8 +1,10 @@
-(function renderLiveKitPage(){
+(async function renderLiveKitPage(){
   const root = document.getElementById('kitPage');
   if (!root) return;
 
-  const chatUrl = 'https://open.kakao.com/o/pAnuH13h';
+  const base = rootBaseFromScript();
+  const remote = await loadRemoteConfig(base);
+  const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || 'https://open.kakao.com/o/pAnuH13h';
 
   const kits = {
     'monthly-300': {
@@ -300,7 +302,8 @@
 
   const params = new URLSearchParams(window.location.search);
   const queryOpens = params.get('live') === '1' || params.get('open') === '1';
-  const isOpen = queryOpens;
+  const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
+  const isOpen = queryOpens || isRemoteOpen;
   const backLink = document.querySelector('.back-link');
   if (backLink && isOpen) backLink.setAttribute('href', '../?live=1');
 
@@ -338,6 +341,33 @@
 
   function esc(value){
     return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function rootBaseFromScript(){
+    const script = document.currentScript;
+    if (!script || !script.src) return '../../';
+    try {
+      return new URL('../', script.src).toString();
+    } catch(e) {
+      return '../../';
+    }
+  }
+
+  function loadRemoteConfig(basePath){
+    return loadRemoteHelper(basePath)
+      .then(helper => helper ? helper.load(basePath) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(basePath){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(basePath || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
   }
 
   function itemKey(sectionIndex, itemIndex){

@@ -7,7 +7,31 @@
   function loadConfig(){
     return fetch(configPath + '?t=' + Date.now(), { cache: 'no-cache' })
       .then(res => res.ok ? res.json() : null)
+      .then(config => loadRemoteConfig().then(remote => {
+        if (config && remote && window.GotjaeRemoteConfig) {
+          return window.GotjaeRemoteConfig.mergeDeep(config, remote);
+        }
+        return config;
+      }))
       .catch(() => null);
+  }
+
+  function loadRemoteConfig(){
+    const base = configPath.includes('/') ? configPath.replace(/[^/]*$/, '') : '';
+    return loadRemoteHelper(base)
+      .then(helper => helper ? helper.load(base) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(base){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(base || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
   }
 
   function applyLinks(config){

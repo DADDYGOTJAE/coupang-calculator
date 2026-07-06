@@ -1,6 +1,8 @@
-(function setupLiveModeLinks(){
+(async function setupLiveModeLinks(){
   const params = new URLSearchParams(window.location.search);
-  const isOpenMode = params.get('live') === '1' || params.get('open') === '1';
+  const remote = await loadRemoteConfig('');
+  const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
+  const isOpenMode = params.get('live') === '1' || params.get('open') === '1' || isRemoteOpen;
   if (!isOpenMode) return;
 
   document.querySelectorAll('[data-live-link]').forEach(link => {
@@ -23,4 +25,21 @@
     if (icon) icon.textContent = '🔓';
     if (meta) meta.textContent = '자료 열기';
   });
+
+  function loadRemoteConfig(basePath){
+    return loadRemoteHelper(basePath)
+      .then(helper => helper ? helper.load(basePath) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(basePath){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(basePath || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  }
 })();

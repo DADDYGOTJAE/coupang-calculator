@@ -8,7 +8,11 @@
   try {
     const res = await fetch(base + 'site-config.json?t=' + Date.now(), { cache: 'no-cache' });
     if (!res.ok) return;
-    const config = await res.json();
+    let config = await res.json();
+    const remote = await loadRemoteConfig(base);
+    if (remote && window.GotjaeRemoteConfig) {
+      config = window.GotjaeRemoteConfig.mergeDeep(config, remote);
+    }
     const live = config.live || {};
     if (!live.enabled || !live.startsAt) return;
 
@@ -57,4 +61,21 @@
     draw();
     setInterval(draw, 1000);
   } catch(e) {}
+
+  function loadRemoteConfig(basePath){
+    return loadRemoteHelper(basePath)
+      .then(helper => helper ? helper.load(basePath) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(basePath){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(basePath || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  }
 })();

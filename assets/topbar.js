@@ -7,6 +7,8 @@
     const res = await fetch(base + 'links.json?t=' + Date.now(), { cache: 'no-cache' });
     if (!res.ok) return;
     const data = await res.json();
+    const remote = await loadRemoteConfig(base);
+    if (remote && remote.links) applyRemoteLinks(data, remote.links);
     const channels = data.channels || [];
     if (channels.length === 0) { bar.style.display = 'none'; return; }
     bar.innerHTML = channels.map(channel => {
@@ -16,6 +18,34 @@
     }).join('');
   } catch(e) {
     bar.style.display = 'none';
+  }
+
+  function applyRemoteLinks(data, links){
+    const channels = data.channels || [];
+    channels.forEach(channel => {
+      if (channel.type === 'youtube' && links.youtube && links.youtube.url) channel.url = links.youtube.url;
+      if (channel.type === 'course' && links.course && links.course.url) {
+        channel.url = links.course.url;
+        if (links.course.label) channel.label = links.course.label;
+      }
+    });
+  }
+
+  function loadRemoteConfig(basePath){
+    return loadRemoteHelper(basePath)
+      .then(helper => helper ? helper.load(basePath) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(basePath){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(basePath || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
   }
 
   function getIcon(channel){

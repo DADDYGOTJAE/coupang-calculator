@@ -1,15 +1,18 @@
-(function setupLiveKitGate(){
+(async function setupLiveKitGate(){
   const list = document.querySelector('[data-live-kit-list]');
   if (!list) return;
 
   const params = new URLSearchParams(window.location.search);
   const queryOpens = params.get('live') === '1' || params.get('open') === '1';
-  const isOpen = queryOpens;
+  const base = rootBaseFromScript();
+  const remote = await loadRemoteConfig(base);
+  const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
+  const isOpen = queryOpens || isRemoteOpen;
   const notice = document.getElementById('liveKitNotice');
   const heroText = document.getElementById('liveKitHeroText');
   const backLink = document.querySelector('.back-link');
   const chatLink = document.querySelector('[data-live-chat]');
-  const chatUrl = 'https://open.kakao.com/o/pAnuH13h';
+  const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || 'https://open.kakao.com/o/pAnuH13h';
 
   if (isOpen) {
     if (backLink) backLink.setAttribute('href', '../?live=1');
@@ -60,4 +63,31 @@
     if (lock) lock.textContent = '라이브 중 공개';
     if (meta) meta.textContent = '라이브 중 공개';
   });
+
+  function rootBaseFromScript(){
+    const script = document.currentScript;
+    if (!script || !script.src) return '../';
+    try {
+      return new URL('../', script.src).toString();
+    } catch(e) {
+      return '../';
+    }
+  }
+
+  function loadRemoteConfig(basePath){
+    return loadRemoteHelper(basePath)
+      .then(helper => helper ? helper.load(basePath) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(basePath){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(basePath || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  }
 })();

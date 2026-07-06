@@ -2,7 +2,7 @@
   "live": {
     "enabled": true,
     "title": "무료 라이브까지",
-    "startsAt": "2026-07-29T19:50:00+09:00",
+    "startsAt": "2026-07-28T19:30:00+09:00",
     "afterText": "무료 라이브 일정 조율중입니다.",
     "waitingRoomLabel": "무료 라이브 대기방 입장",
     "waitingRoomUrl": "https://m.site.naver.com/281tU"

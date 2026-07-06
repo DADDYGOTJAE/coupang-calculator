@@ -21,14 +21,16 @@
 <script src="../../assets/countdown.js"></script>
 <script src="../../assets/sticky-header.js"></script>
 <script>
-(function renderDifferentiationPage(){
+(async function renderDifferentiationPage(){
   const root = document.getElementById('diffPage');
   const backLink = document.getElementById('backLink');
   if (!root) return;
 
   const params = new URLSearchParams(window.location.search);
-  const isOpen = params.get('live') === '1' || params.get('open') === '1';
-  const chatUrl = 'https://open.kakao.com/o/pAnuH13h';
+  const remote = await loadRemoteConfig('../../');
+  const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
+  const isOpen = params.get('live') === '1' || params.get('open') === '1' || isRemoteOpen;
+  const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || 'https://open.kakao.com/o/pAnuH13h';
 
   if (backLink && isOpen) backLink.setAttribute('href', '../?live=1');
 
@@ -185,6 +187,23 @@
       <a class="btn primary" href="${chatUrl}" target="_blank" rel="noopener">대디갓재 소통방 입장하기</a>
     </section>
   `;
+
+  function loadRemoteConfig(basePath){
+    return loadRemoteHelper(basePath)
+      .then(helper => helper ? helper.load(basePath) : null)
+      .catch(() => null);
+  }
+
+  function loadRemoteHelper(basePath){
+    if (window.GotjaeRemoteConfig) return Promise.resolve(window.GotjaeRemoteConfig);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = new URL('assets/remote-config.js?t=' + Date.now(), new URL(basePath || './', window.location.href)).toString();
+      script.onload = () => resolve(window.GotjaeRemoteConfig || null);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  }
 })();
 </script>
 </body>
