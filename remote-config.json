@@ -1,7 +1,7 @@
 {
   "remote": {
-    "enabled": false,
-    "endpoint": "",
+    "enabled": true,
+    "endpoint": "https://script.google.com/macros/s/AKfycbym4tJh8gVT5gAscdvNAdQQC45jXef-2fLsshzhzrHUTXuBfTXS7Huo_dojIGi_AsgW/exec",
     "mode": "jsonp"
   }
 }
