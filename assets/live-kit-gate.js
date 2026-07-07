@@ -31,10 +31,11 @@
       notice.innerHTML = '<b>라이브 참여자 공개:</b> 지금은 자료를 열람할 수 있습니다. 체크하면서 막히는 부분은 Q&A 때 바로 질문해주세요.';
     }
     list.querySelectorAll('a.kit-item').forEach(card => {
-      const href = card.getAttribute('href') || '';
+      const href = card.dataset.lockedHref || card.getAttribute('href') || '';
       const url = new URL(href, window.location.href);
       url.searchParams.set('live', '1');
       card.setAttribute('href', url.href);
+      card.setAttribute('aria-disabled', 'false');
       card.classList.remove('locked');
       const lock = card.querySelector('.kit-lock');
       const meta = card.querySelector('.meta');
@@ -54,7 +55,7 @@
   }
 
   list.querySelectorAll('a.kit-item').forEach(card => {
-    card.dataset.lockedHref = card.getAttribute('href') || '';
+    card.dataset.lockedHref = card.dataset.lockedHref || card.getAttribute('href') || '';
     card.removeAttribute('href');
     card.setAttribute('aria-disabled', 'true');
     card.classList.add('locked');
