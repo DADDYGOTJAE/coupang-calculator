@@ -4,17 +4,41 @@
 
   const base = root.dataset.base || '';
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const DEFAULT_CONFIG = {
+    live: {
+      enabled: true,
+      title: '무료 라이브까지',
+      startsAt: '2026-07-28T19:30:00+09:00',
+      afterText: '무료 라이브 일정 조율중입니다.',
+      waitingRoomLabel: '무료 라이브 대기방 입장',
+      waitingRoomUrl: 'https://m.site.naver.com/281tU'
+    }
+  };
+  let countdownTimer = null;
+
+  startCountdown(DEFAULT_CONFIG);
 
   try {
     const res = await fetch(base + 'site-config.json?t=' + Date.now(), { cache: 'no-cache' });
     if (!res.ok) return;
     let config = await res.json();
+    startCountdown(config);
+
     const remote = await loadRemoteConfig(base);
     if (remote && window.GotjaeRemoteConfig) {
       config = window.GotjaeRemoteConfig.mergeDeep(config, remote);
+      startCountdown(config);
     }
+  } catch(e) {}
+
+  function startCountdown(config){
     const live = config.live || {};
-    if (!live.enabled || !live.startsAt) return;
+    if (!live.enabled || !live.startsAt) {
+      root.classList.remove('show');
+      if (countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = null;
+      return;
+    }
 
     const target = new Date(live.startsAt).getTime();
     if (!Number.isFinite(target)) return;
@@ -59,8 +83,9 @@
     }
 
     draw();
-    setInterval(draw, 1000);
-  } catch(e) {}
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(draw, 1000);
+  }
 
   function loadRemoteConfig(basePath){
     return loadRemoteHelper(basePath)

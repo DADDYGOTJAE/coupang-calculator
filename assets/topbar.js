@@ -1,23 +1,66 @@
 (async function loadTopbar(){
   const bar = document.getElementById('topbar');
   if (!bar) return;
-  const base = bar.dataset.base || '';
+  const countdown = document.getElementById('liveCountdown');
+  const base = bar.dataset.base || (countdown && countdown.dataset.base) || '';
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const DEFAULT_DATA = {
+    channels: [
+      {
+        type: 'youtube',
+        icon: '▶',
+        label: '대디갓재 유튜브',
+        url: 'https://www.youtube.com/@대디갓재'
+      },
+      {
+        type: 'course',
+        icon: '🎓',
+        label: '쿠팡병법 컨설팅 신청하기',
+        url: 'https://gotjae.liveklass.com/classes/308088'
+      }
+    ]
+  };
+
+  render(DEFAULT_DATA);
+
   try {
-    const res = await fetch(base + 'links.json?t=' + Date.now(), { cache: 'no-cache' });
-    if (!res.ok) return;
-    const data = await res.json();
+    const localData = await loadLocalLinks(base);
+    const data = localData || clone(DEFAULT_DATA);
+    render(data);
+
     const remote = await loadRemoteConfig(base);
-    if (remote && remote.links) applyRemoteLinks(data, remote.links);
+    if (remote && remote.links) {
+      applyRemoteLinks(data, remote.links);
+      render(data);
+    }
+  } catch(e) {
+    render(DEFAULT_DATA);
+  }
+
+  function render(data){
     const channels = data.channels || [];
-    if (channels.length === 0) { bar.style.display = 'none'; return; }
+    if (channels.length === 0) {
+      bar.style.display = 'none';
+      return;
+    }
+
+    bar.style.display = '';
     bar.innerHTML = channels.map(channel => {
       const type = channel.type ? ` nav-${esc(channel.type)}` : '';
       const icon = getIcon(channel);
       return `<a class="${type.trim()}" href="${esc(channel.url)}" target="_blank" rel="noopener">${icon}${esc(channel.label)}</a>`;
     }).join('');
-  } catch(e) {
-    bar.style.display = 'none';
+  }
+
+  function clone(data){
+    return JSON.parse(JSON.stringify(data));
+  }
+
+  async function loadLocalLinks(basePath){
+    const res = await fetch(basePath + 'links.json?t=' + Date.now(), { cache: 'no-cache' });
+    if (!res.ok) return null;
+    return res.json();
   }
 
   function applyRemoteLinks(data, links){
