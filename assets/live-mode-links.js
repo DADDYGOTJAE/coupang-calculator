@@ -1,30 +1,40 @@
 (async function setupLiveModeLinks(){
   const params = new URLSearchParams(window.location.search);
+  const queryOpens = params.get('live') === '1' || params.get('open') === '1';
+
+  if (queryOpens) {
+    applyOpenMode();
+    return;
+  }
+
   const remote = await loadRemoteConfig('');
   const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
-  const isOpenMode = params.get('live') === '1' || params.get('open') === '1' || isRemoteOpen;
-  if (!isOpenMode) return;
+  if (!isRemoteOpen) return;
 
-  document.querySelectorAll('[data-live-link]').forEach(link => {
-    const currentHref = link.getAttribute('href') || '';
-    const url = new URL(currentHref, window.location.href);
-    url.searchParams.set('live', '1');
-    link.setAttribute('href', url.href);
-    link.classList.remove('locked');
-    link.classList.add('feature');
+  applyOpenMode();
 
-    const ribbon = link.querySelector('.ribbon');
-    const icon = link.querySelector('.icon');
-    const meta = link.querySelector('.meta');
+  function applyOpenMode(){
+    document.querySelectorAll('[data-live-link]').forEach(link => {
+      const currentHref = link.getAttribute('href') || '';
+      const url = new URL(currentHref, window.location.href);
+      url.searchParams.set('live', '1');
+      link.setAttribute('href', url.href);
+      link.classList.remove('locked');
+      link.classList.add('feature');
 
-    if (ribbon) {
-      ribbon.textContent = '참여자 공개';
-      ribbon.classList.remove('lock');
-      ribbon.classList.add('open');
-    }
-    if (icon) icon.textContent = '🔓';
-    if (meta) meta.textContent = '자료 열기';
-  });
+      const ribbon = link.querySelector('.ribbon');
+      const icon = link.querySelector('.icon');
+      const meta = link.querySelector('.meta');
+
+      if (ribbon) {
+        ribbon.textContent = '참여자 공개';
+        ribbon.classList.remove('lock');
+        ribbon.classList.add('open');
+      }
+      if (icon) icon.textContent = '🔓';
+      if (meta) meta.textContent = '자료 열기';
+    });
+  }
 
   function loadRemoteConfig(basePath){
     return loadRemoteHelper(basePath)

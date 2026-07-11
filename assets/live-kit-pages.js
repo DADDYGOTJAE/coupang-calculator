@@ -2,8 +2,10 @@
   const root = document.getElementById('kitPage');
   if (!root) return;
 
+  const params = new URLSearchParams(window.location.search);
+  const queryOpens = params.get('live') === '1' || params.get('open') === '1';
   const base = rootBaseFromScript();
-  const remote = await loadRemoteConfig(base);
+  const remote = queryOpens ? null : await loadRemoteConfig(base);
   const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || 'https://open.kakao.com/o/pAnuH13h';
 
   const kits = {
@@ -300,8 +302,6 @@
     return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const queryOpens = params.get('live') === '1' || params.get('open') === '1';
   const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
   const isOpen = queryOpens || isRemoteOpen;
   const backLink = document.querySelector('.back-link');

@@ -27,9 +27,10 @@
   if (!root) return;
 
   const params = new URLSearchParams(window.location.search);
-  const remote = await loadRemoteConfig('../../');
+  const queryOpens = params.get('live') === '1' || params.get('open') === '1';
+  const remote = queryOpens ? null : await loadRemoteConfig('../../');
   const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
-  const isOpen = params.get('live') === '1' || params.get('open') === '1' || isRemoteOpen;
+  const isOpen = queryOpens || isRemoteOpen;
   const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || 'https://open.kakao.com/o/pAnuH13h';
 
   if (backLink && isOpen) backLink.setAttribute('href', '../?live=1');

@@ -5,25 +5,34 @@
   const params = new URLSearchParams(window.location.search);
   const queryOpens = params.get('live') === '1' || params.get('open') === '1';
   const base = rootBaseFromScript();
+  const defaultChatUrl = 'https://open.kakao.com/o/pAnuH13h';
+
+  if (queryOpens) {
+    openKit(defaultChatUrl);
+    loadRemoteConfig(base).then(remote => {
+      const remoteChatUrl = remote && remote.liveKit && remote.liveKit.chatUrl;
+      if (remoteChatUrl) updateChatLink(remoteChatUrl);
+    });
+    return;
+  }
+
   const remote = await loadRemoteConfig(base);
   const isRemoteOpen = remote && remote.liveKit && remote.liveKit.open === true;
-  const isOpen = queryOpens || isRemoteOpen;
-  const notice = document.getElementById('liveKitNotice');
-  const heroText = document.getElementById('liveKitHeroText');
-  const backLink = document.querySelector('.back-link');
-  const chatLink = document.querySelector('[data-live-chat]');
-  const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || 'https://open.kakao.com/o/pAnuH13h';
+  const chatUrl = (remote && remote.liveKit && remote.liveKit.chatUrl) || defaultChatUrl;
 
-  if (isOpen) {
+  if (isRemoteOpen) {
+    openKit(chatUrl);
+    return;
+  }
+
+  lockKit();
+
+  function openKit(chatUrl){
+    const notice = document.getElementById('liveKitNotice');
+    const heroText = document.getElementById('liveKitHeroText');
+    const backLink = document.querySelector('.back-link');
     if (backLink) backLink.setAttribute('href', '../?live=1');
-    if (chatLink) {
-      chatLink.setAttribute('href', chatUrl);
-      chatLink.setAttribute('target', '_blank');
-      chatLink.setAttribute('rel', 'noopener');
-      chatLink.setAttribute('aria-disabled', 'false');
-      chatLink.classList.remove('disabled');
-      chatLink.textContent = '대디갓재 소통방 입장하기';
-    }
+    updateChatLink(chatUrl);
     if (heroText) {
       heroText.textContent = '소싱부터 차별화, 기획, 제작, 등록, 광고까지 각 단계별로 보고 따라할 수 있는 자료입니다. 라이브 흐름에 맞춰 순서대로 열어보시면 됩니다.';
     }
@@ -42,28 +51,41 @@
       if (lock) lock.textContent = '지금 공개';
       if (meta) meta.textContent = card.dataset.openMeta || '열어보기';
     });
-    return;
   }
 
-  if (chatLink) {
+  function updateChatLink(chatUrl){
+    const chatLink = document.querySelector('[data-live-chat]');
+    if (!chatLink) return;
+    chatLink.setAttribute('href', chatUrl);
+    chatLink.setAttribute('target', '_blank');
+    chatLink.setAttribute('rel', 'noopener');
+    chatLink.setAttribute('aria-disabled', 'false');
+    chatLink.classList.remove('disabled');
+    chatLink.textContent = '대디갓재 소통방 입장하기';
+  }
+
+  function lockKit(){
+    const chatLink = document.querySelector('[data-live-chat]');
+    if (chatLink) {
     chatLink.removeAttribute('href');
     chatLink.removeAttribute('target');
     chatLink.removeAttribute('rel');
     chatLink.setAttribute('aria-disabled', 'true');
     chatLink.classList.add('disabled');
     chatLink.textContent = '라이브 참여자 전용 공개';
-  }
+    }
 
-  list.querySelectorAll('a.kit-item').forEach(card => {
-    card.dataset.lockedHref = card.dataset.lockedHref || card.getAttribute('href') || '';
-    card.removeAttribute('href');
-    card.setAttribute('aria-disabled', 'true');
-    card.classList.add('locked');
-    const lock = card.querySelector('.kit-lock');
-    const meta = card.querySelector('.meta');
-    if (lock) lock.textContent = '라이브 중 공개';
-    if (meta) meta.textContent = '라이브 중 공개';
-  });
+    list.querySelectorAll('a.kit-item').forEach(card => {
+      card.dataset.lockedHref = card.dataset.lockedHref || card.getAttribute('href') || '';
+      card.removeAttribute('href');
+      card.setAttribute('aria-disabled', 'true');
+      card.classList.add('locked');
+      const lock = card.querySelector('.kit-lock');
+      const meta = card.querySelector('.meta');
+      if (lock) lock.textContent = '라이브 중 공개';
+      if (meta) meta.textContent = '라이브 중 공개';
+    });
+  }
 
   function rootBaseFromScript(){
     const script = document.currentScript;
