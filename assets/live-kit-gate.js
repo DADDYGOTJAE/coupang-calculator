@@ -9,6 +9,7 @@
 
   if (queryOpens) {
     openKit(defaultChatUrl);
+    document.documentElement.classList.remove('live-query-loading');
     loadRemoteConfig(base).then(remote => {
       const remoteChatUrl = remote && remote.liveKit && remote.liveKit.chatUrl;
       if (remoteChatUrl) updateChatLink(remoteChatUrl);
@@ -22,10 +23,12 @@
 
   if (isRemoteOpen) {
     openKit(chatUrl);
+    document.documentElement.classList.remove('live-query-loading');
     return;
   }
 
   lockKit();
+  document.documentElement.classList.remove('live-query-loading');
 
   function openKit(chatUrl){
     const notice = document.getElementById('liveKitNotice');

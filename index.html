@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>대디갓재의 쿠팡 셀러 도우미</title>
 <meta name="description" content="대디갓재 무료 라이브 신청자를 위한 쿠팡 셀러 자료실입니다.">
-<link rel="stylesheet" href="assets/portal.css?v=20260701e">
+<script>
+if (new URLSearchParams(window.location.search).get('live') === '1' || new URLSearchParams(window.location.search).get('open') === '1') {
+  document.documentElement.classList.add('live-query-loading');
+}
+</script>
+<link rel="stylesheet" href="assets/portal.css?v=20260711a">
 </head>
 <body>
 <div class="wrap">

@@ -24,6 +24,8 @@ body{
   overflow-wrap:break-word;
 }
 a{color:inherit}
+html.live-query-loading [data-live-link],
+html.live-query-loading [data-live-kit-list]{visibility:hidden}
 .wrap{max-width:980px;margin:0 auto}
 .sticky-shell{position:sticky;top:0;z-index:95;margin:-28px -16px 24px;padding:10px 16px 12px;background:rgba(245,241,232,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(222,210,191,.7)}
 .is-scrolled .sticky-shell{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding-top:8px;padding-bottom:8px;box-shadow:0 8px 22px rgba(54,36,15,.12)}

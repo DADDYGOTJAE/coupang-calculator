@@ -4,6 +4,7 @@
 
   if (queryOpens) {
     applyOpenMode();
+    document.documentElement.classList.remove('live-query-loading');
     return;
   }
 
@@ -12,6 +13,7 @@
   if (!isRemoteOpen) return;
 
   applyOpenMode();
+  document.documentElement.classList.remove('live-query-loading');
 
   function applyOpenMode(){
     document.querySelectorAll('[data-live-link]').forEach(link => {
