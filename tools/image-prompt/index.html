@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>쿠팡 이미지 생성 프롬프트 | 셀러 도구함</title>
-<meta name="description" content="쿠팡 규정에 맞는 이미지를 만들 수 있는 프롬프트 안내입니다.">
+<title>쿠팡 규정 썸네일 프롬프트 | 셀러 도구함</title>
+<meta name="description" content="쿠팡 대표 썸네일 기준에 맞는 흰 배경 상품 이미지를 만들 수 있는 프롬프트입니다.">
 <link rel="stylesheet" href="../../assets/portal.css?v=20260701e">
 </head>
 <body class="tool-detail">
@@ -17,60 +17,72 @@
 
   <header class="hero">
     <span class="eyebrow">이미지 프롬프트</span>
-    <h1>쿠팡 이미지 생성 <b>프롬프트</b></h1>
-    <p>쿠팡 규정에 맞는 상품 이미지를 만들 수 있는 프롬프트입니다.</p>
+    <h1>쿠팡 규정 <b>썸네일 프롬프트</b></h1>
+    <p>아래 프롬프트와 소싱한 상품 이미지를 AI에 함께 입력해주세요. 그러면 쿠팡 대표 썸네일 기준에 맞는 흰 배경 상품 이미지를 만들 수 있습니다.</p>
   </header>
 
   <section class="kit-summary">
-    <div class="kit-summary-item"><b>용도</b><span>쿠팡 상품 이미지 생성</span></div>
-    <div class="kit-summary-item"><b>추천 상황</b><span>쿠팡 규정에 맞는 이미지를 만들어야 할 때</span></div>
-    <div class="kit-summary-item"><b>핵심</b><span>나만의 이미지로 등록해야 위너 매칭을 피할 수 있습니다.</span></div>
+    <div class="kit-summary-item"><b>용도</b><span>쿠팡 대표 썸네일 이미지 제작</span></div>
+    <div class="kit-summary-item"><b>추천 상황</b><span>소싱 이미지로 흰 배경 대표 이미지를 만들어야 할 때</span></div>
+    <div class="kit-summary-item"><b>핵심</b><span>광고컷이 아니라 실제 배송 상품을 선명하고 정직하게 보여주는 이미지입니다.</span></div>
   </section>
 
   <div class="notice">
-    <b>사용 포인트:</b> 아래 프롬프트에서 <b>[product]</b> 부분만 내 상품명으로 바꾸고, 상품 사진과 함께 이미지 생성 AI에 입력해보세요.
+    <b>사용 방법:</b> 프롬프트를 복사한 뒤 소싱한 상품 이미지와 함께 이미지 생성 AI에 입력해주세요.
   </div>
 
   <div class="prompt-box">
-    <textarea id="imagePrompt" readonly>Task: From the single photo I provide of [product], create two thumbnail-ready images that meet every rule below.
+    <textarea id="imagePrompt" readonly>첨부한 제품 사진을 기반으로 쿠팡 대표 썸네일용 고화질 상품 이미지를 제작해 주세요.
 
-COMMON RULES (Existing + Coupang Official)
+목표는 고객이 상품을 한눈에 정확히 이해할 수 있는 깨끗한 흰 배경 대표 이미지입니다. 광고처럼 꾸미지 말고, 실제 배송받는 제품을 가장 선명하고 정직하게 보여주는 이미지로 만들어 주세요.
 
-Size: at least 1000 x 1000 px, no larger than 10 MB.
-- You may work on a 2048 x 2048 px canvas at 300 dpi.
+[최종 이미지 기준]
+- 정사각형 캔버스로 제작해 주세요.
+- 권장 사이즈는 2048 x 2048px입니다.
+- 최소 1000 x 1000px 이상이어야 합니다.
+- 최종 파일은 고화질 JPEG, sRGB 컬러로 저장해 주세요.
+- 배경은 반드시 순수 흰색 #FFFFFF 단색이어야 합니다.
+- 투명 배경, 회색 배경, 그라데이션, 질감 배경은 사용하지 마세요.
 
-File formats accepted: jpeg, avif, webp, png, gif (non-animated).
-- Submit the final files as high-quality JPEG (sRGB).
+[제품 기준]
+- 첨부한 사진 속 제품 1개만 사용해 주세요.
+- 제품 외의 소품, 사은품, 패키지 박스, 손, 모델, 장식물은 넣지 마세요.
+- 고객이 실제로 받는 제품 상태와 동일하게 보여 주세요.
+- 제품의 로고, 마크, 색상, 재질감, 봉제선, 표면 질감, 패턴, 굴곡, 디테일은 원본 그대로 보존해 주세요.
+- 제품을 임의로 예쁘게 재창조하거나 다른 디자인처럼 보이게 수정하지 마세요.
+- 제품의 형태, 비율, 두께, 길이, 너비를 늘리거나 압축하거나 왜곡하지 마세요.
 
-Front-facing, high-resolution product photo: preserve 100% of all visible marks, logos, textures, and fine details.
+[구도 기준]
+- 제품은 이미지 중앙에 배치해 주세요.
+- 제품이 이미지의 가로 또는 세로 기준 약 85%를 차지하도록 크게 배치해 주세요.
+- 너무 작게 보이지 않게 하되, 이미지 가장자리와 닿지 않도록 균일한 흰 여백을 남겨 주세요.
+- 제품은 가능한 정면을 향하게 배치해 주세요.
+- 제품 특성상 약간의 각도가 필요한 경우에도 원래 가로세로 비율은 반드시 유지해 주세요.
 
-Background: solid pure white #FFFFFF only; no transparency.
+[조명 및 그림자 기준]
+- 밝고 부드럽고 균일한 스튜디오 조명처럼 보이게 해 주세요.
+- 제품의 색상, 로고, 소재, 질감이 선명하게 보이도록 해 주세요.
+- 과한 반사광, 번들거림, 색 틀어짐, 어두운 그림자는 피해주세요.
+- 제품 바로 아래에는 자연스럽고 부드러운 접촉 그림자만 약하게 추가해 주세요.
+- 그림자는 제품이 흰 바닥 위에 놓여 있는 느낌만 줄 정도로 자연스럽게 처리해 주세요.
 
-Composition:
-- The product should occupy about 85% of the image's width or height.
-- Center the product in the frame, except for Version B below.
+[절대 금지 사항]
+- 텍스트 삽입 금지
+- 아이콘 삽입 금지
+- 배지 삽입 금지
+- 할인 문구 삽입 금지
+- 그래픽 효과 삽입 금지
+- 워터마크 삽입 금지
+- 테두리 삽입 금지
+- 소품 추가 금지
+- 모델 또는 손 추가 금지
+- 제품 개수 추가 금지
+- 배경에 질감, 그림, 패턴 추가 금지
+- 상세페이지용 연출컷처럼 제작 금지
+- 원본 제품과 다르게 재디자인 금지
 
-No distortion: do not stretch, compress, or alter the product's proportions. Rotation must keep the original aspect ratio intact.
-
-Lighting: bright, soft, even. Add a natural contact shadow directly beneath the product.
-
-No overlays: absolutely no text, graphics, watermarks, or borders.
-
-Actual shipping condition only: show the product exactly as the customer receives it. No props or freebies.
-
-Deliverables: only the two final image files, with no additional explanations or metadata.
-
-VERSION A - Primary Angle
-
-- Rotate the product about 15 degrees clockwise and tilt about 5 degrees downward for a dynamic front-top view.
-- Keep any printed text or logo upright and fully legible.
-- Center the product and let it fill about 85% of the frame.
-
-VERSION B - Alternate Composition
-
-- From Version A, add about 5 degrees more clockwise rotation, about 20 degrees total, or tilt about 7 degrees downward.
-- Shift the product slightly toward the upper-left quadrant and scale it to about 80% of the frame, keeping clean, even margins.
-- Purpose: provide a subtle variation for A/B testing to improve click-through rate.</textarea>
+최종 결과물은 쿠팡 대표 썸네일로 바로 등록 가능한 이미지 1장만 생성해 주세요.
+추가 설명, 문구, 메타데이터, 비교 이미지 없이 최종 이미지 파일만 제출해 주세요.</textarea>
     <button class="btn primary" type="button" id="copyPrompt">프롬프트 복사하기</button>
   </div>
 
