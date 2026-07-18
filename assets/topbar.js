@@ -16,8 +16,14 @@
       {
         type: 'course',
         icon: '🎓',
-        label: '쿠팡병법 컨설팅 신청하기',
+        label: '쿠팡병법 컨설팅 신청',
         url: 'https://gotjae.liveklass.com/classes/308088'
+      },
+      {
+        type: 'inquiry',
+        icon: '💬',
+        label: '상담·문의',
+        url: 'https://open.kakao.com/o/sYwul23h'
       }
     ]
   };
@@ -70,6 +76,13 @@
       if (channel.type === 'course' && links.course && links.course.url) {
         channel.url = links.course.url;
         if (links.course.label) channel.label = links.course.label;
+      }
+      if (channel.type === 'inquiry') {
+        const inquiry = links.inquiry || links.cash_inquiry;
+        if (inquiry && inquiry.url) {
+          channel.url = inquiry.url;
+          if (inquiry.label) channel.label = inquiry.label;
+        }
       }
     });
   }

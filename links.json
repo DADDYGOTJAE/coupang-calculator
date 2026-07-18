@@ -9,8 +9,14 @@
     {
       "type": "course",
       "icon": "🎓",
-      "label": "쿠팡병법 컨설팅 신청하기",
+      "label": "쿠팡병법 컨설팅 신청",
       "url": "https://gotjae.liveklass.com/classes/308088"
+    },
+    {
+      "type": "inquiry",
+      "icon": "💬",
+      "label": "상담·문의",
+      "url": "https://open.kakao.com/o/sYwul23h"
     }
   ]
 }

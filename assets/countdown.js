@@ -45,8 +45,10 @@
 
     root.classList.add('show');
     const waitingRoomUrl = live.waitingRoomUrl || 'https://m.site.naver.com/281tU';
-    const waitingRoomLabel = live.waitingRoomLabel || '무료 라이브 대기방 입장';
-    const action = waitingRoomUrl ? `<a class="count-action" href="${esc(waitingRoomUrl)}" target="_blank" rel="noopener">${esc(waitingRoomLabel)}</a>` : '';
+    const liveEntryUrl = live.liveEntryUrl || live.liveUrl || (config.links && config.links.live_entry && config.links.live_entry.url) || '';
+    const actionUrl = liveEntryUrl || waitingRoomUrl;
+    const actionLabel = liveEntryUrl ? '라이브 입장' : '대기방 입장';
+    const action = actionUrl ? `<a class="count-action" href="${esc(actionUrl)}" target="_blank" rel="noopener"><span>무료 라이브</span><strong>${esc(actionLabel)}</strong></a>` : '';
 
     function draw(){
       const diff = target - Date.now();
