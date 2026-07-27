@@ -479,21 +479,18 @@ function calc(){
   const logiAmt = L * Q;
   const adAmt   = revenueReal * (adP / 100);  // 광고비 % 도 최종 할인가 기준
 
-  // 부가세 (광고 제외, END ROAS 계산용)
-  const outVAT       = V > 0 ? revenueReal * V / (100 + V) : 0;
-  const inVAT_cost   = V > 0 ? costAmt     * V / (100 + V) : 0;
-  const inVAT_other_noAd = (feeAmt + logiAmt)        * V / 100;
-  const inVAT_other_full = (feeAmt + logiAmt + adAmt)* V / 100;
-  const vatRemit_noAd = outVAT - inVAT_cost - inVAT_other_noAd;
-  const vatRemit_full = outVAT - inVAT_cost - inVAT_other_full;
+  // 구글 소싱 시트와 동일하게 판매가·원가의 부가세를 제외한 공급가액으로 계산
+  const vatFactor    = 1 + (V / 100);
+  const revenueExVat = V > 0 ? revenueReal / vatFactor : revenueReal;
+  const costExVat    = V > 0 ? costAmt / vatFactor : costAmt;
 
   // 마진 (광고 전, 실제 기준)
-  const marginNoAd    = revenueReal - costAmt - feeAmt - logiAmt - vatRemit_noAd;
-  const marginNoAdPct = revenueReal > 0 ? (marginNoAd / revenueReal) * 100 : 0;
+  const marginNoAd    = revenueExVat - costExVat - feeAmt - logiAmt;
+  const marginNoAdPct = revenueExVat > 0 ? (marginNoAd / revenueExVat) * 100 : 0;
 
   // 마진 (광고 후, 실제 기준)
-  const marginAd    = revenueReal - costAmt - feeAmt - logiAmt - adAmt - vatRemit_full;
-  const marginAdPct = revenueReal > 0 ? (marginAd / revenueReal) * 100 : 0;
+  const marginAd    = revenueExVat - costExVat - feeAmt - logiAmt - adAmt;
+  const marginAdPct = revenueExVat > 0 ? (marginAd / revenueExVat) * 100 : 0;
 
   // END ROAS (실제 기준)
   const endRoasReal = marginNoAd > 0 ? (revenueReal / marginNoAd) * 100 : 0;
